@@ -11,35 +11,53 @@ import javax.xml.bind.annotation.XmlRootElement;
 import Database.*;
 
 /**
- *
- * @author me
+ * Describes a player defined by a username, password, and connection status
  */
 @XmlRootElement(name = "Joueur")
 public class Joueur implements IJoueur  {
+    /*
+    * Properties
+    */
+    private String identifiant;         //username
+    private String motDePasse;          //password
+    private ArrayList<Partie> parties;  //unknown
+    private boolean connecte;           //connection status
     
-    private String nom;
-    private String identifiant;
-    private String motDePasse;
-    private ArrayList<Partie> parties;
-
+    /*
+    * Default constructor
+    * NB : track for its presence in the database for implementation errors
+    */
     public Joueur() {
         super();
+        this.identifiant = "John";
+        this.motDePasse = "Doe";
+        connecte = false;
     }
-
-    public Joueur(String nom, String identifiant, String motDePasse) {
+    
+    /*
+    * Creates a new Player
+    * @param identifiant username
+    * @param modDePasse password
+    */
+    public Joueur(String identifiant, String motDePasse) {
         super();
-        this.nom = nom;
         this.identifiant = identifiant;
         this.motDePasse = motDePasse;
         this.parties = new ArrayList<>();
+        connecte = false;
     }
-
-    public String getNom() {
-        return nom;
+    
+    /*
+    * GETTERS AND SETTERS
+    */
+    public boolean getConnecte()
+    {
+        return connecte;
     }
-
-    public void setNom(String nom) {
-        this.nom = nom;
+    
+    public void setConnecte(boolean connectionStatus)
+    {
+        connecte = connectionStatus;
     }
 
     public String getIdentifiant() {
@@ -57,17 +75,20 @@ public class Joueur implements IJoueur  {
     public void setMotDePasse(String motDePasse) {
         this.motDePasse = motDePasse;
     }
-
-    @Override
-    public String toString() {
-        return "Joueur{" + "nom=" + nom + ", identifiant=" + identifiant + ", motDePasse=" + motDePasse + '}';
-    }
-
+    
     public ArrayList<Partie> getParties() {
         return parties;
     }
 
     public void setPartie(Partie partie) {
         this.parties.add(partie);
+    }
+
+    /*
+    * Base serialization function for debug
+    */
+    @Override
+    public String toString() {
+        return "Joueur{identifiant=" + identifiant + ", motDePasse=" + motDePasse + '}';
     }
 }

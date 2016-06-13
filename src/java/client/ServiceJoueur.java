@@ -22,8 +22,10 @@ import java.rmi.registry.Registry;
 import Database.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jeu.Partie;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
  * le classement des joueurs, demander la liste des joueurs connectés, demander 
@@ -66,12 +68,15 @@ public class ServiceJoueur {
         }
         try {
             RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+            if(stub.Login(identifiant, motDePasse))
+                return "OK";
+            else
+                return "Identifiants incorrects";
         } catch (RemoteException ex) {
-            return "Server error #2";
+            return ex.getMessage();
         } catch (NotBoundException ex) {
             return "Incorrect username or password";
         }
-        return "Authentification";
     }
     
     /**
@@ -85,19 +90,50 @@ public class ServiceJoueur {
         Joueur monJoueur = c.getValue();
         Registry registry;
         try {
-            registry = LocateRegistry.getRegistry(1100);
+            registry = LocateRegistry.getRegistry(1099);
         } catch (RemoteException ex) {
             return "Server error #1";
         }
         try {
             RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
             
-            if(!stub.AddPlayer(monJoueur.getNom(),monJoueur.getMotDePasse()))
+            if(!stub.AddPlayer(monJoueur.getIdentifiant(),monJoueur.getMotDePasse()))
             {
                 return "Error";
             }
             else
-                return "Account creation success";
+                return "OK";
+        } catch (RemoteException ex) {
+            return ex.getMessage();
+        } catch (NotBoundException ex) {
+            return "Game not found critical error";
+        }
+    }
+    
+    /**
+     * Creates a new game bound to the player
+     */
+    @PUT
+    @Path("creerPartie")
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces("text/plain")
+    public String creerPartie(JAXBElement<Joueur> c) {
+        Joueur monJoueur = c.getValue();
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(1099);
+        } catch (RemoteException ex) {
+            return "Server error #1";
+        }
+        try {
+            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+            
+            if(!stub.CreateGame(monJoueur.getIdentifiant(), monJoueur.getMotDePasse()))
+            {
+                return "Error";
+            }
+            else
+                return "OK";
         } catch (RemoteException ex) {
             return ex.getMessage();
         } catch (NotBoundException ex) {
@@ -139,10 +175,29 @@ public class ServiceJoueur {
      * donnerListePartiesAttente
      */
     @GET
-    @Path("donnerListePartiesAttente/{identifiant}")
+    @Path("donnerListePartiesAttente/{identifiant}/{motDePasse}")
     @Produces("text/plain")
-    public String donnerListePartiesAttente(@PathParam("identifiant") String identifiant) {
-        return "Donner liste parties attente";
+    public String donnerListePartiesAttente(@PathParam("identifiant") String identifiant, 
+            @PathParam("motDePasse") String motDePasse) {
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(1099);
+        } catch (RemoteException ex) {
+            return "Server error #1";
+        }
+        try {
+            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+            List<Partie> games = stub.ListCurrentGames(identifiant, motDePasse);
+            
+            if(games != null)
+                return Integer.toString(games.size());
+            else
+                return "Identifiants incorrects";
+        } catch (RemoteException ex) {
+            return ex.getMessage();
+        } catch (NotBoundException ex) {
+            return "Incorrect username or password";
+        }
     }
     
 }
