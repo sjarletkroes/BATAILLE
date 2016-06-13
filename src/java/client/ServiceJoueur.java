@@ -9,10 +9,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
 import joueurs.JoueurImpl;
+import joueurs.Joueurs;
 
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
@@ -21,15 +23,32 @@ import joueurs.JoueurImpl;
  *
  * @author me
  */
+@Path("/")
 public class ServiceJoueur {
+    
+    private static final Joueurs joueurs;
+    
+    static {
+        joueurs = new Joueurs();
+        joueurs.liste.add(new JoueurImpl("Nom", "Prenom", "Identifiant", "Mot De Passe"));
+    }
+    
+    /**
+     * listerJoueurs
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Joueurs listerJoueurs() {
+        return joueurs;
+    }
     
     /**
      * authentifier
      */
     @GET
-    @Path("authentifier")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public String authentifier() {
+    @Path("authentifier/{identifiant}")
+    @Produces("text/plain")
+    public String authentifier(@PathParam("identifiant") String identifiant) {
         return "Authentification";
     }
     
@@ -38,7 +57,6 @@ public class ServiceJoueur {
      */
     @PUT
     @Path("creerCompte")
-    @Consumes(MediaType.APPLICATION_XML)
     @Produces("text/plain")
     public String creerCompte(JAXBElement<JoueurImpl> c) {
         return "Création compte";
@@ -48,9 +66,9 @@ public class ServiceJoueur {
      * donnerScore
      */
     @GET
-    @Path("donnerScore")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public String donnerScore() {
+    @Path("donnerScore/{identifiant}")
+    @Produces("text/plain")
+    public String donnerScore(@PathParam("identifiant") String identifiant) {
         return "Donner score";
     }
     
@@ -58,9 +76,9 @@ public class ServiceJoueur {
      * donnerClassement
      */
     @GET
-    @Path("donnerClassement")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public String donnerClassement() {
+    @Path("donnerClassement/{identifiant}")
+    @Produces("text/plain")
+    public String donnerClassement(@PathParam("identifiant") String identifiant) {
         return "Donner classement";
     }
     
@@ -68,9 +86,9 @@ public class ServiceJoueur {
      * donnerListeConnectes
      */
     @GET
-    @Path("donnerListeConnectes")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public String donnerListeConnectes() {
+    @Path("donnerListeConnectes/{identifiant}")
+    @Produces("text/plain")
+    public String donnerListeConnectes(@PathParam("identifiant") String identifiant) {
         return "Donner liste joueurs connectés";
     }
     
@@ -78,9 +96,9 @@ public class ServiceJoueur {
      * donnerListePartiesAttente
      */
     @GET
-    @Path("donnerListePartiesAttente")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public String donnerListePartiesAttente() {
+    @Path("donnerListePartiesAttente/{identifiant}")
+    @Produces("text/plain")
+    public String donnerListePartiesAttente(@PathParam("identifiant") String identifiant) {
         return "Donner liste parties attente";
     }
     

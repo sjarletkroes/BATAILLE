@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author me
  */
-@XmlRootElement(name = "Joueur")
+@XmlRootElement(name = "JoueurImpl")
 public class JoueurImpl extends Thread implements Joueur  {
     
     private String nom;
