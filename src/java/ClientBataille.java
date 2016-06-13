@@ -1,4 +1,5 @@
 import java.io.StringReader;
+import java.util.Scanner;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -102,7 +103,7 @@ public class ClientBataille {
          */
         serviceJoueur = ClientBuilder.newClient().target("http://localhost:8080/BATAILLE");
         
-        String identifiant = "stalker474";
+        /*String identifiant = "stalker474";
         String motDePasse = "stalker";
         JoueurImpl joueur = new JoueurImpl("Possylkine", "Anton", identifiant, motDePasse);
         
@@ -111,7 +112,82 @@ public class ClientBataille {
         System.out.println(donnerScore(identifiant));
         System.out.println(donnerClassement(identifiant));
         System.out.println(donnerListeConnectes(identifiant));
-        System.out.println(donnerListeConnectes(identifiant));
-        System.out.println(donnerListePartiesAttente(identifiant));
+        System.out.println(donnerListePartiesAttente(identifiant));*/
+        
+        Scanner sc = new Scanner(System.in);
+        JoueurImpl joueur = null;
+        
+        System.out.println("#####################################");
+        System.out.println("# Bienvenue sur le jeu de bataille! #");
+        System.out.println("#####################################");
+        System.out.print("Pour vous identifier taper 1, pour créer un compte taper 2: ");
+        
+        int input;
+        boolean mauvaiseReponse = true;
+        while (mauvaiseReponse) {
+            input = sc.nextInt();
+            if (input == 1) {
+                sc = new Scanner(System.in);
+                System.out.print("Entrez votre identifiant: ");
+                String identifiant = sc.nextLine();
+                System.out.print("Entrez votre mot de passe: ");
+                String motDePasse = sc.nextLine();
+                System.out.println(authentifier(identifiant, motDePasse));
+                mauvaiseReponse = false;
+                
+            } else if (input == 2) {
+                sc = new Scanner(System.in);
+                System.out.print("Entrez votre nom: ");
+                String nom = sc.nextLine();
+                System.out.print("Entrez votre prénom: ");
+                String prenom = sc.nextLine();
+                System.out.print("Entrez votre identifiant: ");
+                String identifiant = sc.nextLine();
+                System.out.print("Entrez votre mot de passe: ");
+                String motDePasse = sc.nextLine();
+                joueur = new JoueurImpl(nom, prenom, identifiant, motDePasse);
+                System.out.println(creerCompte(joueur));
+                mauvaiseReponse = false;
+                
+            } else {
+                System.out.println("Désolé, je n'ai pas compris, veuillez réessayer: ");
+            }
+        }
+        
+        while (joueur != null) {
+            System.out.println("Vous souhaitez: ");
+            System.out.println("    récupérer votre score, taper 1");
+            System.out.println("    récupérer votre classement, taper 2");
+            System.out.println("    recupérer la liste des joueurs connectés, taper 3");
+            System.out.println("    récupérer la liste des parties en attente, taper 4");
+            System.out.println("    vous déconnecter, taper n'importe quel autre caractère");
+            System.out.print("C'est à vous: ");
+
+            input = sc.nextInt();
+            switch (input) {
+                case 1: 
+                    System.out.println("#####################################");
+                    System.out.println(donnerScore(joueur.getIdentifiant()));
+                    System.out.println("#####################################");
+                    break;
+                case 2: 
+                    System.out.println("#####################################");
+                    System.out.println(donnerClassement(joueur.getIdentifiant()));
+                    System.out.println("#####################################");
+                    break;
+                case 3: 
+                    System.out.println("#####################################");
+                    System.out.println(donnerListeConnectes(joueur.getIdentifiant()));
+                    System.out.println("#####################################");
+                    break;
+                case 4: 
+                    System.out.println("#####################################");
+                    System.out.println(donnerListePartiesAttente(joueur.getIdentifiant()));
+                    System.out.println("#####################################");
+                    break;
+                default: joueur = null;
+            }
+        }
+        System.out.println("Vous êtes déconnecté");
     }
 }
