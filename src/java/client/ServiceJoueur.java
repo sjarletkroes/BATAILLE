@@ -46,7 +46,7 @@ public class ServiceJoueur {
      * authentifier
      */
     @GET
-    @Path("authentifier/{identifiant}{motDePasse}")
+    @Path("authentifier/{identifiant}/{motDePasse}")
     @Produces("text/plain")
     public String authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
@@ -58,6 +58,7 @@ public class ServiceJoueur {
      */
     @PUT
     @Path("creerCompte")
+    @Consumes(MediaType.APPLICATION_XML)
     @Produces("text/plain")
     public String creerCompte(JAXBElement<JoueurImpl> c) {
         return "Création compte";

@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author me
  */
 @XmlRootElement(name = "JoueurImpl")
-public class JoueurImpl extends Thread implements Joueur  {
+public class JoueurImpl implements Joueur  {
     
     private String nom;
     private String prenom;
@@ -23,9 +23,11 @@ public class JoueurImpl extends Thread implements Joueur  {
     private ArrayList<Partie> parties;
 
     public JoueurImpl() {
+        super();
     }
 
     public JoueurImpl(String nom, String prenom, String identifiant, String motDePasse) {
+        super();
         this.nom = nom;
         this.prenom = prenom;
         this.identifiant = identifiant;

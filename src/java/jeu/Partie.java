@@ -5,10 +5,13 @@
  */
 package jeu;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author me
  */
+@XmlRootElement(name = "Partie")
 public class Partie {
     
 }

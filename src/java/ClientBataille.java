@@ -49,7 +49,7 @@ public class ClientBataille {
      * authentifier
      */
     public static String authentifier(String identifiant, String motDePasse) {
-        return serviceJoueur.path("authentifier/" + identifiant + motDePasse)
+        return serviceJoueur.path("authentifier/" + identifiant + "/" + motDePasse)
                 .request().get(String.class);
     }
     
@@ -57,7 +57,7 @@ public class ClientBataille {
      * creerCompte
      */
     public static String creerCompte(JoueurImpl joueur) {
-        return serviceJoueur.path("authentifier").request(MediaType.TEXT_PLAIN)
+        return serviceJoueur.path("creerCompte/").request(MediaType.TEXT_PLAIN)
                 .put(Entity.xml(joueur)).readEntity(String.class);
     }
     
@@ -100,7 +100,7 @@ public class ClientBataille {
         /*
          ** Initialisation du stub pour interagir avec le service web REST
          */
-        serviceJoueur = ClientBuilder.newClient().target("http://localhost:8080/Banque");
+        serviceJoueur = ClientBuilder.newClient().target("http://localhost:8080/BATAILLE");
         
         String identifiant = "stalker474";
         String motDePasse = "stalker";
