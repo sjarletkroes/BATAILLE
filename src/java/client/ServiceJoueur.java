@@ -46,9 +46,10 @@ public class ServiceJoueur {
      * authentifier
      */
     @GET
-    @Path("authentifier/{identifiant}")
+    @Path("authentifier/{identifiant}{motDePasse}")
     @Produces("text/plain")
-    public String authentifier(@PathParam("identifiant") String identifiant) {
+    public String authentifier(@PathParam("identifiant") String identifiant, 
+            @PathParam("motDePasse") String motDePasse) {
         return "Authentification";
     }
     

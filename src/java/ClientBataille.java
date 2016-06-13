@@ -97,6 +97,11 @@ public class ClientBataille {
      ** --- main ---
      */
     public static void main(String args[]) throws Exception {
+        /*
+         ** Initialisation du stub pour interagir avec le service web REST
+         */
+        serviceJoueur = ClientBuilder.newClient().target("http://localhost:8080/Banque");
+        
         String identifiant = "stalker474";
         String motDePasse = "stalker";
         JoueurImpl joueur = new JoueurImpl("Possylkine", "Anton", identifiant, motDePasse);
