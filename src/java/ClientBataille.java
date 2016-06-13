@@ -9,8 +9,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import joueurs.JoueurImpl;
-import joueurs.Joueurs;
+import joueurs.*;
 
 public class ClientBataille {
 
@@ -57,7 +56,7 @@ public class ClientBataille {
     /**
      * creerCompte
      */
-    public static String creerCompte(JoueurImpl joueur) {
+    public static String creerCompte(Joueur joueur) {
         return serviceJoueur.path("creerCompte/").request(MediaType.TEXT_PLAIN)
                 .put(Entity.xml(joueur)).readEntity(String.class);
     }
@@ -115,7 +114,7 @@ public class ClientBataille {
         System.out.println(donnerListePartiesAttente(identifiant));*/
         
         Scanner sc = new Scanner(System.in);
-        JoueurImpl joueur = null;
+        Joueur joueur = null;
         
         System.out.println("#####################################");
         System.out.println("# Bienvenue sur le jeu de bataille! #");
@@ -139,13 +138,11 @@ public class ClientBataille {
                 sc = new Scanner(System.in);
                 System.out.print("Entrez votre nom: ");
                 String nom = sc.nextLine();
-                System.out.print("Entrez votre prénom: ");
-                String prenom = sc.nextLine();
                 System.out.print("Entrez votre identifiant: ");
                 String identifiant = sc.nextLine();
                 System.out.print("Entrez votre mot de passe: ");
                 String motDePasse = sc.nextLine();
-                joueur = new JoueurImpl(nom, prenom, identifiant, motDePasse);
+                joueur = new Joueur(nom, identifiant, motDePasse);
                 System.out.println(creerCompte(joueur));
                 mauvaiseReponse = false;
                 

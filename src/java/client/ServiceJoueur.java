@@ -13,9 +13,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
-import joueurs.JoueurImpl;
+import joueurs.Joueur;
 import joueurs.Joueurs;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+import Database.*;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
  * le classement des joueurs, demander la liste des joueurs connectés, demander 
@@ -30,7 +38,7 @@ public class ServiceJoueur {
     
     static {
         joueurs = new Joueurs();
-        joueurs.liste.add(new JoueurImpl("Nom", "Prenom", "Identifiant", "Mot De Passe"));
+        //joueurs.liste.add(new Joueur("Nom", "Prenom", "Identifiant", "Mot De Passe"));
     }
     
     /**
@@ -50,6 +58,19 @@ public class ServiceJoueur {
     @Produces("text/plain")
     public String authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(1099);
+        } catch (RemoteException ex) {
+            return "Server error #1";
+        }
+        try {
+            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+        } catch (RemoteException ex) {
+            return "Server error #2";
+        } catch (NotBoundException ex) {
+            return "Incorrect username or password";
+        }
         return "Authentification";
     }
     
@@ -60,8 +81,28 @@ public class ServiceJoueur {
     @Path("creerCompte")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces("text/plain")
-    public String creerCompte(JAXBElement<JoueurImpl> c) {
-        return "Création compte";
+    public String creerCompte(JAXBElement<Joueur> c) {
+        Joueur monJoueur = c.getValue();
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(1100);
+        } catch (RemoteException ex) {
+            return "Server error #1";
+        }
+        try {
+            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+            
+            if(!stub.AddPlayer(monJoueur.getNom(),monJoueur.getMotDePasse()))
+            {
+                return "Error";
+            }
+            else
+                return "Account creation success";
+        } catch (RemoteException ex) {
+            return ex.getMessage();
+        } catch (NotBoundException ex) {
+            return "Game not found critical error";
+        }
     }
     
     /**

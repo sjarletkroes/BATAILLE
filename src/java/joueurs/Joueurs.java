@@ -16,5 +16,5 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Joueurs")
 public class Joueurs {
     @XmlElement
-    public ArrayList<JoueurImpl> liste = new ArrayList<>();
+    public ArrayList<Joueur> liste = new ArrayList<>();
 }
