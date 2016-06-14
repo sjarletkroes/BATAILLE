@@ -20,6 +20,7 @@ public class Partie {
     private Joueur createur;            //creator's username
     private List<Joueur> listeJoueurs;   //list of participants
     private boolean fini;
+    private Joueur gagnant;
     
     /**
      * Crée un nouveau jeu
@@ -30,6 +31,7 @@ public class Partie {
     {
         this.createur = createur;
         this.fini = false;
+        this.gagnant = null;
         this.listeJoueurs = new ArrayList<>();
         this.listeJoueurs.add(createur);
     }
@@ -38,6 +40,7 @@ public class Partie {
     {
         this.createur = createur;
         this.fini = false;
+        this.gagnant = null;
         this.listeJoueurs = new ArrayList<>();
         this.listeJoueurs.add(createur);
         this.listeJoueurs.addAll(Arrays.asList(joueur));
@@ -57,7 +60,7 @@ public class Partie {
         this.createur = createur;
     }
     
-    public boolean getFini() 
+    public boolean isFini() 
     {
         return fini;
     }
@@ -65,6 +68,22 @@ public class Partie {
     private void setFini(boolean fini)    //only accessed by the class if conditions meet
     {
         this.fini = fini;
+    }
+
+    public Joueur getGagnant() {
+        return gagnant;
+    }
+
+    public void setGagnant(Joueur gagnant) {
+        this.gagnant = gagnant;
+    }
+
+    public List<Joueur> getListeJoueurs() {
+        return listeJoueurs;
+    }
+
+    public void setListeJoueurs(List<Joueur> listeJoueurs) {
+        this.listeJoueurs = listeJoueurs;
     }
     
     /**
@@ -80,7 +99,7 @@ public class Partie {
             if(it.next().getIdentifiant().equals(joueur.getIdentifiant()))
                 exists = true;
         }
-        if(!getFini() && !exists)
+        if(!isFini() && !exists)
             listeJoueurs.add(joueur);
         else
             return false;

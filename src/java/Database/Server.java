@@ -135,14 +135,15 @@ public class Server implements RemoteServer {
     */
     @Override
     public List<Partie> ListCurrentGames(String username, String password) throws RemoteException {
-        if(Authentify(username,password) == null)
+        if(Authentify(username,password) == null) {
             return null;
+        }
         List<Partie> currentGames = new ArrayList<Partie>();
         ListIterator <Partie> it = parties.listIterator();
         while(it.hasNext())
         {
             Partie p = it.next();
-            if(!p.getFini())
+            if(!p.isFini())
                 currentGames.add(p);
         }
         return currentGames;

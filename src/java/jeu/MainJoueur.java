@@ -16,6 +16,11 @@ public class MainJoueur {
     private Joueur joueur;
     private ArrayList<Carte> main;
 
+    public MainJoueur(Joueur joueur) {
+        this.joueur = joueur;
+        this.main = new ArrayList<>();
+    }
+
     public MainJoueur(Joueur joueur, ArrayList<Carte> main) {
         this.joueur = joueur;
         this.main = main;
@@ -46,6 +51,10 @@ public class MainJoueur {
             return main.remove(0);
         }
         return null;
+    }
+
+    public void addCarte (Carte carte) {
+        this.main.add(carte);
     }
     
     public boolean isEmpty() {
