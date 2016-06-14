@@ -6,10 +6,12 @@
 package Database;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * 
  */
 public interface IJoueur extends Remote {
-    
+    String getIdentifiant() throws RemoteException;
+    String getMotDePasse() throws RemoteException;
 }

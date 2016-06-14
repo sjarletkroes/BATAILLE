@@ -9,12 +9,14 @@ import parties.Partie;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlRootElement;
 import Database.*;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 
 /**
  * Describes a player defined by a username, password, and connection status
  */
 @XmlRootElement(name = "Joueur")
-public class Joueur implements IJoueur  {
+public class Joueur implements Serializable {
     /*
     * Properties
     */
@@ -50,6 +52,11 @@ public class Joueur implements IJoueur  {
     /*
     * GETTERS AND SETTERS
     */
+    
+    public String getIdentifiant()
+    {
+        return this.identifiant;
+    }
     public boolean getConnecte()
     {
         return connecte;
@@ -59,11 +66,7 @@ public class Joueur implements IJoueur  {
     {
         connecte = connectionStatus;
     }
-
-    public String getIdentifiant() {
-        return identifiant;
-    }
-
+    
     public void setIdentifiant(String identifiant) {
         this.identifiant = identifiant;
     }
@@ -82,13 +85,5 @@ public class Joueur implements IJoueur  {
 
     public void setPartie(Partie partie) {
         this.parties.add(partie);
-    }
-
-    /*
-    * Base serialization function for debug
-    */
-    @Override
-    public String toString() {
-        return "Joueur{identifiant=" + identifiant + ", motDePasse=" + motDePasse + '}';
     }
 }

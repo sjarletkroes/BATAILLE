@@ -11,11 +11,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import joueurs.*;
+import parties.Partie;
+import parties.Parties;
 
 public class ClientBataille {
 
     private static WebTarget serviceJoueur = null;
 
+    
     /**
      * listerJoueurs
      */
@@ -89,18 +92,144 @@ public class ClientBataille {
     /**
      * donnerListeConnectes
      */
-    public static String donnerListeConnectes(String identifiant) {
-        return serviceJoueur.path("donnerListeConnectes/" + identifiant)
+    public static Joueurs donnerListeConnectes(String identifiant,String motDePasse) throws JAXBException {
+        String reponse;
+        StringBuffer xmlStr;
+        JAXBContext context;
+        JAXBElement<Joueurs> root;
+        Unmarshaller unmarshaller;
+
+        /*
+         ** Instanciation du convertiseur XML => Objet Java
+         */
+        context = JAXBContext.newInstance(Joueurs.class);
+        unmarshaller = context.createUnmarshaller();
+
+        /*
+         ** Envoi de la requete
+         */
+        reponse = serviceJoueur.path("donnerListeConnectes/" + identifiant + "/" + motDePasse)
                 .request().get(String.class);
+
+        /*
+         ** Traitement de la reponse XML : transformation en une instance de la classe Villes
+         */
+        xmlStr = new StringBuffer(reponse);
+        if(reponse.length()>0)
+            root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Joueurs.class);
+        else
+            return null;
+        return root.getValue();
     }
 
     /**
      * donnerListePartiesAttente
      */
-    public static String donnerListePartiesAttente(String identifiant, String motDePasse) {
-        return serviceJoueur.path("donnerListePartiesAttente/" + identifiant + "/" + motDePasse)
+    public static Parties donnerListePartiesAttente(String identifiant, String motDePasse) throws JAXBException {
+        String reponse;
+        StringBuffer xmlStr;
+        JAXBContext context;
+        JAXBElement<Parties> root;
+        Unmarshaller unmarshaller;
+
+        /*
+         ** Instanciation du convertiseur XML => Objet Java
+         */
+        context = JAXBContext.newInstance(Parties.class);
+        unmarshaller = context.createUnmarshaller();
+
+        /*
+         ** Envoi de la requete
+         */
+        reponse = serviceJoueur.path("donnerListePartiesAttente/" + identifiant + "/" + motDePasse)
                 .request().get(String.class);
+
+        /*
+         ** Traitement de la reponse XML : transformation en une instance de la classe Villes
+         */
+        xmlStr = new StringBuffer(reponse);
+        if(reponse.length()>0)
+            root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Parties.class);
+        else
+            return null;
+        Parties p = root.getValue();
+        return p;
     }
+    
+    /**
+     * donnerListePartiesAttente
+     */
+    public static Parties donnerListeParties(String identifiant, String motDePasse) throws JAXBException {
+        String reponse;
+        StringBuffer xmlStr;
+        JAXBContext context;
+        JAXBElement<Parties> root;
+        Unmarshaller unmarshaller;
+
+        /*
+         ** Instanciation du convertiseur XML => Objet Java
+         */
+        context = JAXBContext.newInstance(Parties.class);
+        unmarshaller = context.createUnmarshaller();
+
+        /*
+         ** Envoi de la requete
+         */
+        reponse = serviceJoueur.path("donnerListePartiesAttente/" + identifiant + "/" + motDePasse)
+                .request().get(String.class);
+
+        /*
+         ** Traitement de la reponse XML : transformation en une instance de la classe Villes
+         */
+        xmlStr = new StringBuffer(reponse);
+        if(reponse.length()>0)
+            root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Parties.class);
+        else
+            return null;
+        Parties p = root.getValue();
+        Parties attenteP = new Parties();
+        for(Partie pa : p.liste)
+        {
+            if(!pa.isFini())
+                attenteP.liste.add(pa);
+        }
+        return attenteP;
+    }
+    
+    /**
+     * donnerListePartiesAttente
+     */
+    public static Partie rejoindrePartie(String partie, String identifiant, String motDePasse) throws JAXBException {
+        String reponse;
+        StringBuffer xmlStr;
+        JAXBContext context;
+        JAXBElement<Parties> root;
+        Unmarshaller unmarshaller;
+
+        /*
+         ** Instanciation du convertiseur XML => Objet Java
+         */
+        context = JAXBContext.newInstance(Parties.class);
+        unmarshaller = context.createUnmarshaller();
+
+        /*
+         ** Envoi de la requete
+         */
+        reponse = serviceJoueur.path("rejoindrePartie/" + partie + "/" + identifiant + "/" + motDePasse)
+                .request().get(String.class);
+
+        /*
+         ** Traitement de la reponse XML : transformation en une instance de la classe Villes
+         */
+        xmlStr = new StringBuffer(reponse);
+        if(reponse.length()>0)
+            root = unmarshaller.unmarshal(new StreamSource(new StringReader(xmlStr.toString())), Parties.class);
+        else
+            return null;
+        Parties p = root.getValue();
+        return p.liste.get(0);
+    }
+
 
     /*
      ** --- main ---
@@ -123,6 +252,7 @@ public class ClientBataille {
          System.out.println(donnerListePartiesAttente(identifiant));*/
         Scanner sc = new Scanner(System.in);
         Joueur joueur = null;
+        Partie partie = null;
 
         /*joueur = new Joueur("plop", "plop");
          System.out.println(creerCompte(joueur));
@@ -178,6 +308,7 @@ public class ClientBataille {
             System.out.println("    recupérer la liste des joueurs connectés, taper 3");
             System.out.println("    récupérer la liste des parties en attente, taper 4");
             System.out.println("    créer une nouvelle partie, taper 5");
+            System.out.println("    rejoindre partie, taper 6");
             System.out.println("    vous déconnecter, taper n'importe quel autre caractère");
             System.out.print("C'est à vous: ");
 
@@ -199,17 +330,41 @@ public class ClientBataille {
                     break;
                 case 3:
                     System.out.println("#####################################");
-                    System.out.println(donnerListeConnectes(joueur.getIdentifiant()));
+                    Joueurs joueurs = donnerListeConnectes(joueur.getIdentifiant(),joueur.getMotDePasse());
+                    for(Joueur j : joueurs.liste)
+                    {
+                        System.out.println(j.getIdentifiant());
+                    }
                     System.out.println("#####################################");
                     break;
                 case 4:
                     System.out.println("#####################################");
-                    System.out.println(donnerListePartiesAttente(joueur.getIdentifiant(), joueur.getMotDePasse()));
+                    System.out.println(donnerListeParties(joueur.getIdentifiant(), joueur.getMotDePasse()));
                     System.out.println("#####################################");
                     break;
                 case 5:
                     System.out.println("#####################################");
                     System.out.println(creerPartie(joueur));
+                    System.out.println("#####################################");
+                    break;
+                case 6:
+                    System.out.println("#####################################");
+                    Parties parties = donnerListePartiesAttente(joueur.getIdentifiant(), joueur.getMotDePasse());
+                    int i = 1;
+                    for(Partie p : parties.liste)
+                    {
+                        System.out.println(p.getCreateur().getIdentifiant() + "nombre joueurs : " + p.getListeJoueurs().size());
+                        i++;
+                    }
+                     try {
+                        input = Integer.getInteger(sc.nextLine());
+                    } catch (Exception e) {
+                        input = i;
+                    }
+                    if(input != i)
+                    {
+                        partie = rejoindrePartie(parties.liste.get(i).getCreateur().getIdentifiant(),joueur.getIdentifiant(),joueur.getMotDePasse());
+                    }
                     System.out.println("#####################################");
                     break;
                 default:

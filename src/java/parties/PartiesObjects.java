@@ -3,18 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package joueurs;
+package parties;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- */
-@XmlRootElement(name = "Joueurs")
-public class Joueurs implements Serializable {
+
+@XmlRootElement(name = "Parties")
+public class PartiesObjects {
+    public PartiesObjects() {liste = new ArrayList<>();}
     @XmlElement
-    public ArrayList<Joueur> liste = new ArrayList<>();
+    public ArrayList<Partie> liste;
 }

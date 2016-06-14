@@ -5,6 +5,10 @@
  */
 package parties;
 
+import Database.IJoueur;
+import Database.IPartie;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,12 +20,12 @@ import joueurs.Joueur;
  * Describes a basic Game identified by creator's username and games unique name
  */
 @XmlRootElement(name = "Partie")
-public class Partie {
+public class Partie implements Serializable {
     private Joueur createur;            //creator's username
     private List<Joueur> listeJoueurs;   //list of participants
     private boolean fini;
     private Joueur gagnant;
-    
+    public Partie() {}
     /**
      * Crée un nouveau jeu
      *
@@ -84,6 +88,11 @@ public class Partie {
 
     public void setListeJoueurs(List<Joueur> listeJoueurs) {
         this.listeJoueurs = listeJoueurs;
+    }
+    
+    public int getNombreJoueurs()
+    {
+        return listeJoueurs.size();
     }
     
     /**

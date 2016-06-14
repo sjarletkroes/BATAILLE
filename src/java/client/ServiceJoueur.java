@@ -22,10 +22,13 @@ import java.rmi.registry.Registry;
 import Database.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import parties.Partie;
+import parties.Parties;
+import parties.PartiesObjects;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
  * le classement des joueurs, demander la liste des joueurs connectés, demander 
@@ -56,24 +59,24 @@ public class ServiceJoueur {
     @GET
     @Path("authentifier/{identifiant}/{motDePasse}")
     @Produces("text/plain")
-    public Joueur authentifier(@PathParam("identifiant") String identifiant, 
+    public boolean authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
         Registry registry;
         try {
             registry = LocateRegistry.getRegistry(1099);
         } catch (RemoteException ex) {
             System.out.println("Server error #1");
-            return null;
+            return false;
         }
         try {
             RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
             return stub.Login(identifiant, motDePasse);
         } catch (RemoteException ex) {
             System.out.println(ex.getMessage());
-            return null;
+            return false;
         } catch (NotBoundException ex) {
             System.out.println("Incorrect username or password");
-            return null;
+            return false;
         }
     }
     
@@ -163,10 +166,31 @@ public class ServiceJoueur {
      * donnerListeConnectes
      */
     @GET
-    @Path("donnerListeConnectes/{identifiant}")
-    @Produces("text/plain")
-    public String donnerListeConnectes(@PathParam("identifiant") String identifiant) {
-        return "Donner liste joueurs connectés";
+    @Path("donnerListeConnectes/{identifiant}/{motdepasse}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Joueurs donnerListeConnectes(@PathParam("identifiant") String identifiant,@PathParam("motdepasse") String motDePasse) {
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(1099);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        try {
+            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+            Joueurs games = stub.ListJoueursConnectes(identifiant,motDePasse);
+            if(games != null)
+            {
+                return games;
+            }
+            else
+                return null;
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (NotBoundException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
     
     /**
@@ -174,28 +198,63 @@ public class ServiceJoueur {
      */
     @GET
     @Path("donnerListePartiesAttente/{identifiant}/{motDePasse}")
-    @Produces("text/plain")
-    public String donnerListePartiesAttente(@PathParam("identifiant") String identifiant, 
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Parties donnerListePartiesAttente(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
         Registry registry;
         try {
             registry = LocateRegistry.getRegistry(1099);
         } catch (RemoteException ex) {
-            return "Server error #1";
+            ex.printStackTrace();
+            return null;
         }
         try {
             RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            List<Partie> games = stub.ListCurrentGames(identifiant, motDePasse);
-            
+            Parties games = stub.ListCurrentGames(identifiant, motDePasse);
             if(games != null)
-                return Integer.toString(games.size());
+            {
+                return games;
+            }
             else
-                return "Identifiants incorrects";
+                return null;
         } catch (RemoteException ex) {
-            return ex.getMessage();
+            ex.printStackTrace();
         } catch (NotBoundException ex) {
-            return "Incorrect username or password";
+            ex.printStackTrace();
         }
+        return null;
+    }
+    
+    /**
+     * donnerListePartiesAttente
+     */
+    @GET
+    @Path("rejoindrePartie/{partie}/{identifiant}/{motDePasse}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Parties rejoindrePartie(@PathParam("partie") String partie,@PathParam("identifiant") String identifiant, 
+            @PathParam("motDePasse") String motDePasse) {
+        Registry registry;
+        try {
+            registry = LocateRegistry.getRegistry(1099);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        try {
+            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
+            Parties games = stub.RejoindrePartie(partie,identifiant, motDePasse);
+            if(games != null)
+            {
+                return games;
+            }
+            else
+                return null;
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (NotBoundException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
     
 }

@@ -6,11 +6,15 @@
 package Database;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
+import joueurs.Joueur;
 
 /**
  * 
  */
 public interface IPartie extends Remote  {
-    String getPlayers() throws RemoteException;
-    int    getPlayerScore(IJoueur joueur) throws RemoteException;
+    List<String> getJoueurs() throws RemoteException;
+    int    getJoueurScore(IJoueur joueur) throws RemoteException;
+    String getNomCreateur() throws RemoteException;;
+    int    getNombreJoueurs() throws RemoteException;;
 }
