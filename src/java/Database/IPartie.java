@@ -8,8 +8,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- *
- * @author Anton
+ * 
  */
 public interface IPartie extends Remote  {
     String getPlayers() throws RemoteException;

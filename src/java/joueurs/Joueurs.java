@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author me
  */
 @XmlRootElement(name = "Joueurs")
 public class Joueurs {

@@ -14,27 +14,26 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jeu.Partie;
+import parties.Partie;
 import joueurs.Joueur;
 
 /**
- *
- * @author Anton
+ * 
  */
 public class Server implements RemoteServer {
     
     /*
     *Properties
     */
-    private List<Joueur> Players;   //List of all players
-    private List<Partie> Gamesets;  //List of current and old games
+    private List<Joueur> joueurs;   //List of all players
+    private List<Partie> parties;  //List of current and old games
     
     /*
     *Instanciate a server
     */
     public Server() {
-        Players = new ArrayList<Joueur>();
-        Gamesets = new ArrayList<Partie>();
+        joueurs = new ArrayList<Joueur>();
+        parties = new ArrayList<Partie>();
     }
     /*
     *Main entry
@@ -74,16 +73,16 @@ public class Server implements RemoteServer {
     *@param password Users password
     *@return true if the user has been found
     */
-    private boolean Authentify(String username, String password)
+    private Joueur Authentify(String username, String password)
     {
-        ListIterator <Joueur> it = Players.listIterator();
+        ListIterator <Joueur> it = joueurs.listIterator();
         while(it.hasNext())
         {
             Joueur j = it.next();
             if(j.getIdentifiant().equals(username) && j.getMotDePasse().equals(password))
-                return true;
+                return j;
         }
-        return false;
+        return null;
     }
     /*
     Checks if the user is in the players list
@@ -92,7 +91,7 @@ public class Server implements RemoteServer {
     *@return true if the user has been found
     */
     @Override
-    public boolean Login(String username, String password) throws RemoteException {
+    public Joueur Login(String username, String password) throws RemoteException {
         return Authentify(username,password);
     }
     /*
@@ -106,12 +105,12 @@ public class Server implements RemoteServer {
         Joueur joueur = new Joueur(username,password);
         boolean exist = false;
 
-        ListIterator <Joueur> it = Players.listIterator();
+        ListIterator <Joueur> it = joueurs.listIterator();
         while(it.hasNext() && !exist)
             exist = it.next().getIdentifiant().equals(username);
         if(exist)
             return false;
-        Players.add(joueur);
+        joueurs.add(joueur);
         
         return true;
     }
@@ -123,9 +122,10 @@ public class Server implements RemoteServer {
     */
     @Override
     public boolean CreateGame(String username, String password) throws RemoteException {
-        if(!Authentify(username,password))
+        Joueur j = Authentify(username,password);
+        if(j == null)
             return false;
-        Gamesets.add(new Partie(username));
+        parties.add(new Partie(j));
         return true;
     }
     /*
@@ -135,14 +135,14 @@ public class Server implements RemoteServer {
     */
     @Override
     public List<Partie> ListCurrentGames(String username, String password) throws RemoteException {
-        if(!Authentify(username,password))
+        if(Authentify(username,password) == null)
             return null;
         List<Partie> currentGames = new ArrayList<Partie>();
-        ListIterator <Partie> it = Gamesets.listIterator();
+        ListIterator <Partie> it = parties.listIterator();
         while(it.hasNext())
         {
             Partie p = it.next();
-            if(!p.getEnded())
+            if(!p.getFini())
                 currentGames.add(p);
         }
         return currentGames;

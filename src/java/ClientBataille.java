@@ -1,3 +1,4 @@
+
 import java.io.StringReader;
 import java.util.Scanner;
 import javax.ws.rs.client.ClientBuilder;
@@ -14,7 +15,7 @@ import joueurs.*;
 public class ClientBataille {
 
     private static WebTarget serviceJoueur = null;
-    
+
     /**
      * listerJoueurs
      */
@@ -44,15 +45,15 @@ public class ClientBataille {
 
         return root.getValue();
     }
-    
+
     /**
      * authentifier
      */
-    public static String authentifier(String identifiant, String motDePasse) {
+    public static Joueur authentifier(String identifiant, String motDePasse) {
         return serviceJoueur.path("authentifier/" + identifiant + "/" + motDePasse)
-                .request().get(String.class);
+                .request().get(Joueur.class);
     }
-    
+
     /**
      * creerCompte
      */
@@ -60,7 +61,7 @@ public class ClientBataille {
         return serviceJoueur.path("creerCompte/").request(MediaType.TEXT_PLAIN)
                 .put(Entity.xml(joueur)).readEntity(String.class);
     }
-    
+
     /**
      * creerCompte
      */
@@ -68,7 +69,7 @@ public class ClientBataille {
         return serviceJoueur.path("creerPartie/").request(MediaType.TEXT_PLAIN)
                 .put(Entity.xml(joueur)).readEntity(String.class);
     }
-    
+
     /**
      * donnerScore
      */
@@ -76,7 +77,7 @@ public class ClientBataille {
         return serviceJoueur.path("donnerScore/" + identifiant)
                 .request().get(String.class);
     }
-    
+
     /**
      * donnerClassement
      */
@@ -84,7 +85,7 @@ public class ClientBataille {
         return serviceJoueur.path("donnerClassement/" + identifiant)
                 .request().get(String.class);
     }
-    
+
     /**
      * donnerListeConnectes
      */
@@ -92,15 +93,15 @@ public class ClientBataille {
         return serviceJoueur.path("donnerListeConnectes/" + identifiant)
                 .request().get(String.class);
     }
-    
+
     /**
      * donnerListePartiesAttente
      */
     public static String donnerListePartiesAttente(String identifiant, String motDePasse) {
-        return serviceJoueur.path("donnerListePartiesAttente/" + identifiant + "/"+ motDePasse)
+        return serviceJoueur.path("donnerListePartiesAttente/" + identifiant + "/" + motDePasse)
                 .request().get(String.class);
     }
-    
+
     /*
      ** --- main ---
      */
@@ -109,34 +110,31 @@ public class ClientBataille {
          ** Initialisation du stub pour interagir avec le service web REST
          */
         serviceJoueur = ClientBuilder.newClient().target("http://localhost:8080/BATAILLE");
-        
+
         /*String identifiant = "stalker474";
-        String motDePasse = "stalker";
-        JoueurImpl joueur = new JoueurImpl("Possylkine", "Anton", identifiant, motDePasse);
+         String motDePasse = "stalker";
+         JoueurImpl joueur = new JoueurImpl("Possylkine", "Anton", identifiant, motDePasse);
         
-        System.out.println(authentifier(identifiant, motDePasse));
-        System.out.println(creerCompte(joueur));
-        System.out.println(donnerScore(identifiant));
-        System.out.println(donnerClassement(identifiant));
-        System.out.println(donnerListeConnectes(identifiant));
-        System.out.println(donnerListePartiesAttente(identifiant));*/
-        
+         System.out.println(authentifier(identifiant, motDePasse));
+         System.out.println(creerCompte(joueur));
+         System.out.println(donnerScore(identifiant));
+         System.out.println(donnerClassement(identifiant));
+         System.out.println(donnerListeConnectes(identifiant));
+         System.out.println(donnerListePartiesAttente(identifiant));*/
         Scanner sc = new Scanner(System.in);
         Joueur joueur = null;
-        
-        
-        
-        /*joueur = new Joueur("plop", "plop");
-        System.out.println(creerCompte(joueur));
 
-        System.out.println(authentifier("plop", "plop"));*/
+        /*joueur = new Joueur("plop", "plop");
+         System.out.println(creerCompte(joueur));
+
+         System.out.println(authentifier("plop", "plop"));*/
         int input;
         boolean mauvaiseReponse = true;
         while (mauvaiseReponse) {
             System.out.println("#####################################");
-        System.out.println("# Bienvenue sur le jeu de bataille! #");
-        System.out.println("#####################################");
-        System.out.print("Pour vous identifier taper 1, pour créer un compte taper 2: ");
+            System.out.println("# Bienvenue sur le jeu de bataille! #");
+            System.out.println("#####################################");
+            System.out.print("Pour vous identifier taper 1, pour créer un compte taper 2: ");
             input = sc.nextInt();
             if (input == 1) {
                 sc = new Scanner(System.in);
@@ -144,11 +142,12 @@ public class ClientBataille {
                 String identifiant = sc.nextLine();
                 System.out.print("Entrez votre mot de passe: ");
                 String motDePasse = sc.nextLine();
-                String res = authentifier(identifiant, motDePasse);
-                mauvaiseReponse = !res.equals("OK");
-                if(!mauvaiseReponse)
+                joueur = authentifier(identifiant, motDePasse);
+                mauvaiseReponse = (joueur == null);
+                if (!mauvaiseReponse) {
                     System.out.print("Connexion OK");
-                
+                }
+
             } else if (input == 2) {
                 sc = new Scanner(System.in);
                 System.out.print("Entrez votre identifiant: ");
@@ -158,15 +157,16 @@ public class ClientBataille {
                 joueur = new Joueur(identifiant, motDePasse);
                 String res = creerCompte(joueur);
                 mauvaiseReponse = !res.equals("OK");
-                if(!mauvaiseReponse)
-                    System.out.print("Compte créé!!");
-                mauvaiseReponse = true; //forcer pour revenir a l autho pour le moment
-                
+                if (!mauvaiseReponse) {
+                    System.out.println("Compte créé!!");
+                }
+                //mauvaiseReponse = true; //forcer pour revenir a l autho pour le moment
+
             } else {
                 System.out.println("Désolé, je n'ai pas compris, veuillez réessayer: ");
             }
         }
-        
+
         while (joueur != null) {
             System.out.println("Vous souhaitez: ");
             System.out.println("    récupérer votre score, taper 1");
@@ -179,32 +179,33 @@ public class ClientBataille {
 
             input = sc.nextInt();
             switch (input) {
-                case 1: 
+                case 1:
                     System.out.println("#####################################");
                     System.out.println(donnerScore(joueur.getIdentifiant()));
                     System.out.println("#####################################");
                     break;
-                case 2: 
+                case 2:
                     System.out.println("#####################################");
                     System.out.println(donnerClassement(joueur.getIdentifiant()));
                     System.out.println("#####################################");
                     break;
-                case 3: 
+                case 3:
                     System.out.println("#####################################");
                     System.out.println(donnerListeConnectes(joueur.getIdentifiant()));
                     System.out.println("#####################################");
                     break;
-                case 4: 
+                case 4:
                     System.out.println("#####################################");
-                    System.out.println(donnerListePartiesAttente(joueur.getIdentifiant(),joueur.getMotDePasse()));
+                    System.out.println(donnerListePartiesAttente(joueur.getIdentifiant(), joueur.getMotDePasse()));
                     System.out.println("#####################################");
                     break;
-                case 5: 
+                case 5:
                     System.out.println("#####################################");
                     System.out.println(creerPartie(joueur));
                     System.out.println("#####################################");
                     break;
-                default: joueur = null;
+                default:
+                    joueur = null;
             }
         }
         System.out.println("Vous êtes déconnecté");

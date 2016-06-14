@@ -8,8 +8,7 @@ package Database;
 import java.rmi.Remote;
 
 /**
- *
- * @author me
+ * 
  */
 public interface IJoueur extends Remote {
     

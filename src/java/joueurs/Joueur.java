@@ -5,7 +5,7 @@
  */
 package joueurs;
 
-import jeu.Partie;
+import parties.Partie;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlRootElement;
 import Database.*;

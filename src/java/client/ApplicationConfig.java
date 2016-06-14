@@ -9,8 +9,7 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 
 /**
- *
- * @author me
+ * 
  */
 @javax.ws.rs.ApplicationPath("")
 public class ApplicationConfig extends Application {

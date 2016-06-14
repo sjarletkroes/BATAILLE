@@ -25,13 +25,11 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jeu.Partie;
+import parties.Partie;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
  * le classement des joueurs, demander la liste des joueurs connectés, demander 
  * la liste des parties en attente de joueurs.
- *
- * @author me
  */
 @Path("/")
 public class ServiceJoueur {
@@ -58,24 +56,24 @@ public class ServiceJoueur {
     @GET
     @Path("authentifier/{identifiant}/{motDePasse}")
     @Produces("text/plain")
-    public String authentifier(@PathParam("identifiant") String identifiant, 
+    public Joueur authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
         Registry registry;
         try {
             registry = LocateRegistry.getRegistry(1099);
         } catch (RemoteException ex) {
-            return "Server error #1";
+            System.out.println("Server error #1");
+            return null;
         }
         try {
             RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            if(stub.Login(identifiant, motDePasse))
-                return "OK";
-            else
-                return "Identifiants incorrects";
+            return stub.Login(identifiant, motDePasse);
         } catch (RemoteException ex) {
-            return ex.getMessage();
+            System.out.println(ex.getMessage());
+            return null;
         } catch (NotBoundException ex) {
-            return "Incorrect username or password";
+            System.out.println("Incorrect username or password");
+            return null;
         }
     }
     
