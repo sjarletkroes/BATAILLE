@@ -88,8 +88,10 @@ public class Jeu {
                 
                 // S'il ne reste plus de cartes dans la main de m il est éliminé
                 if (m.isEmpty()) {
-                    liste.remove(m);
                     // ajouter un point à tous les autres
+                    this.score.replace(m.getJoueur(), this.score.get(m.getJoueur())+1);
+                    // et supprimer le joueur
+                    liste.remove(m);
                     
                 // sinon m joue
                 } else {

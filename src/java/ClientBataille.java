@@ -135,7 +135,11 @@ public class ClientBataille {
             System.out.println("# Bienvenue sur le jeu de bataille! #");
             System.out.println("#####################################");
             System.out.print("Pour vous identifier taper 1, pour créer un compte taper 2: ");
-            input = sc.nextInt();
+            try {
+                input = Integer.getInteger(sc.nextLine());
+            } catch (Exception e) {
+                input = 3;
+            }
             if (input == 1) {
                 sc = new Scanner(System.in);
                 System.out.print("Entrez votre identifiant: ");
@@ -177,7 +181,11 @@ public class ClientBataille {
             System.out.println("    vous déconnecter, taper n'importe quel autre caractère");
             System.out.print("C'est à vous: ");
 
-            input = sc.nextInt();
+            try {
+                input = Integer.getInteger(sc.nextLine());
+            } catch (Exception e) {
+                input = 6;
+            }
             switch (input) {
                 case 1:
                     System.out.println("#####################################");
