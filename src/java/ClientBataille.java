@@ -250,7 +250,7 @@ public class ClientBataille {
          System.out.println(donnerClassement(identifiant));
          System.out.println(donnerListeConnectes(identifiant));
          System.out.println(donnerListePartiesAttente(identifiant));*/
-        Scanner sc = new Scanner(System.in);
+        Scanner sc;
         Joueur joueur = null;
         Partie partie = null;
 
@@ -261,12 +261,13 @@ public class ClientBataille {
         int input;
         boolean mauvaiseReponse = true;
         while (mauvaiseReponse) {
+            sc = new Scanner(System.in);
             System.out.println("#####################################");
             System.out.println("# Bienvenue sur le jeu de bataille! #");
             System.out.println("#####################################");
             System.out.print("Pour vous identifier taper 1, pour créer un compte taper 2: ");
             try {
-                input = Integer.getInteger(sc.nextLine());
+                input = sc.nextInt();
             } catch (Exception e) {
                 input = 3;
             }
@@ -302,6 +303,7 @@ public class ClientBataille {
         }
 
         while (joueur != null) {
+            sc = new Scanner(System.in);
             System.out.println("Vous souhaitez: ");
             System.out.println("    récupérer votre score, taper 1");
             System.out.println("    récupérer votre classement, taper 2");
@@ -313,9 +315,9 @@ public class ClientBataille {
             System.out.print("C'est à vous: ");
 
             try {
-                input = Integer.getInteger(sc.nextLine());
+                input = sc.nextInt();
             } catch (Exception e) {
-                input = 6;
+                input = 7;
             }
             switch (input) {
                 case 1:
