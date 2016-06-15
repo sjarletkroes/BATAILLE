@@ -59,24 +59,28 @@ public class ServiceJoueur {
     @GET
     @Path("authentifier/{identifiant}/{motDePasse}")
     @Produces("text/plain")
-    public boolean authentifier(@PathParam("identifiant") String identifiant, 
+    public Joueur authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
         Registry registry;
         try {
             registry = LocateRegistry.getRegistry(1099);
         } catch (RemoteException ex) {
             System.out.println("Server error #1");
-            return false;
+            return null;
         }
         try {
             RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            return stub.Login(identifiant, motDePasse);
+            if (stub.Login(identifiant, motDePasse)) {
+                return new Joueur(identifiant, motDePasse);
+            } else {
+                return null;
+            }
         } catch (RemoteException ex) {
             System.out.println(ex.getMessage());
-            return false;
+            return null;
         } catch (NotBoundException ex) {
             System.out.println("Incorrect username or password");
-            return false;
+            return null;
         }
     }
     
@@ -149,7 +153,7 @@ public class ServiceJoueur {
     @Path("donnerScore/{identifiant}")
     @Produces("text/plain")
     public String donnerScore(@PathParam("identifiant") String identifiant) {
-        return "Donner score";
+        return "Désolé, donnerScore n'est pas encore implémenté";
     }
     
     /**
@@ -159,7 +163,7 @@ public class ServiceJoueur {
     @Path("donnerClassement/{identifiant}")
     @Produces("text/plain")
     public String donnerClassement(@PathParam("identifiant") String identifiant) {
-        return "Donner classement";
+        return "Désolé, donnerClassement n'est pas encore implémenté";
     }
     
     /**

@@ -94,6 +94,12 @@ public class Partie implements Serializable {
     {
         return listeJoueurs.size();
     }
+
+    @Override
+    public String toString() {
+        return "Partie{" + "createur=" + createur + ", listeJoueurs=" + listeJoueurs + ", fini=" + fini + ", gagnant=" + gagnant + '}';
+    }
+    
     
     /**
      * Add a joueur to the players list if he doesnt exist there and the game isnt ended

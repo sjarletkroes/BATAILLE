@@ -127,8 +127,9 @@ public class Server implements RemoteServer {
             if(j.getIdentifiant().equals(username) && j.getMotDePasse().equals(password))
                 return false;
         }
-        joueurs.add(new Joueur(username,password));
-        return true;
+        Joueur j = new Joueur(username,password);
+        joueurs.add(j);
+        return Login(username, password);
     }
     /*
     *Create a new game identified by the creators username and the game's name

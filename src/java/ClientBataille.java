@@ -20,7 +20,9 @@ public class ClientBataille {
 
     
     /**
-     * listerJoueurs
+     * listerJoueurs.
+     * @return Joueurs
+     * @throws javax.xml.bind.JAXBException 
      */
     public static Joueurs listerJoueurs() throws JAXBException {
         String reponse;
@@ -50,7 +52,10 @@ public class ClientBataille {
     }
 
     /**
-     * authentifier
+     * authentifier.
+     * @param identifiant
+     * @param motDePasse
+     * @return Joueur
      */
     public static Joueur authentifier(String identifiant, String motDePasse) {
         return serviceJoueur.path("authentifier/" + identifiant + "/" + motDePasse)
@@ -59,6 +64,8 @@ public class ClientBataille {
 
     /**
      * creerCompte
+     * @param joueur
+     * @return String
      */
     public static String creerCompte(Joueur joueur) {
         return serviceJoueur.path("creerCompte/").request(MediaType.TEXT_PLAIN)
@@ -123,7 +130,11 @@ public class ClientBataille {
     }
 
     /**
-     * donnerListePartiesAttente
+     * donnerListePartiesAttente.
+     * @param identifiant
+     * @param motDePasse
+     * @return Parties
+     * @throws javax.xml.bind.JAXBException
      */
     public static Parties donnerListePartiesAttente(String identifiant, String motDePasse) throws JAXBException {
         String reponse;
@@ -158,6 +169,10 @@ public class ClientBataille {
     
     /**
      * donnerListePartiesAttente
+     * @param identifiant
+     * @param motDePasse
+     * @return Parties
+     * @throws javax.xml.bind.JAXBException 
      */
     public static Parties donnerListeParties(String identifiant, String motDePasse) throws JAXBException {
         String reponse;
@@ -198,6 +213,11 @@ public class ClientBataille {
     
     /**
      * donnerListePartiesAttente
+     * @param partie
+     * @param identifiant
+     * @param motDePasse
+     * @return Partie
+     * @throws javax.xml.bind.JAXBException 
      */
     public static Partie rejoindrePartie(String partie, String identifiant, String motDePasse) throws JAXBException {
         String reponse;
@@ -230,7 +250,6 @@ public class ClientBataille {
         return p.liste.get(0);
     }
 
-
     /*
      ** --- main ---
      */
@@ -239,25 +258,11 @@ public class ClientBataille {
          ** Initialisation du stub pour interagir avec le service web REST
          */
         serviceJoueur = ClientBuilder.newClient().target("http://localhost:8080/BATAILLE");
-
-        /*String identifiant = "stalker474";
-         String motDePasse = "stalker";
-         JoueurImpl joueur = new JoueurImpl("Possylkine", "Anton", identifiant, motDePasse);
         
-         System.out.println(authentifier(identifiant, motDePasse));
-         System.out.println(creerCompte(joueur));
-         System.out.println(donnerScore(identifiant));
-         System.out.println(donnerClassement(identifiant));
-         System.out.println(donnerListeConnectes(identifiant));
-         System.out.println(donnerListePartiesAttente(identifiant));*/
         Scanner sc;
         Joueur joueur = null;
         Partie partie = null;
 
-        /*joueur = new Joueur("plop", "plop");
-         System.out.println(creerCompte(joueur));
-
-         System.out.println(authentifier("plop", "plop"));*/
         int input;
         boolean mauvaiseReponse = true;
         while (mauvaiseReponse) {
@@ -265,7 +270,9 @@ public class ClientBataille {
             System.out.println("#####################################");
             System.out.println("# Bienvenue sur le jeu de bataille! #");
             System.out.println("#####################################");
-            System.out.print("Pour vous identifier taper 1, pour créer un compte taper 2: ");
+            System.out.print("Pour vous identifier taper 1, \n"
+                    + "Pour créer un compte taper 2 \n"
+                    + "Pour quitter taper 3 : ");
             try {
                 input = sc.nextInt();
             } catch (Exception e) {
@@ -278,9 +285,9 @@ public class ClientBataille {
                 System.out.print("Entrez votre mot de passe: ");
                 String motDePasse = sc.nextLine();
                 joueur = authentifier(identifiant, motDePasse);
-                mauvaiseReponse = (joueur == null);
-                if (!mauvaiseReponse) {
+                if (joueur != null) {
                     System.out.print("Connexion OK");
+                    mauvaiseReponse = false;
                 }
 
             } else if (input == 2) {
@@ -291,12 +298,14 @@ public class ClientBataille {
                 String motDePasse = sc.nextLine();
                 joueur = new Joueur(identifiant, motDePasse);
                 String res = creerCompte(joueur);
-                mauvaiseReponse = !res.equals("OK");
-                if (!mauvaiseReponse) {
-                    System.out.println("Compte créé!!");
+                if (res.equals("OK")) {
+                    System.out.println("Compte créé & connexion OK");
+                    mauvaiseReponse = false;
                 }
-                //mauvaiseReponse = true; //forcer pour revenir a l autho pour le moment
-
+                
+            } else if (input == 2) {
+                mauvaiseReponse = false;
+                
             } else {
                 System.out.println("Désolé, je n'ai pas compris, veuillez réessayer: ");
             }
@@ -341,7 +350,9 @@ public class ClientBataille {
                     break;
                 case 4:
                     System.out.println("#####################################");
-                    System.out.println(donnerListeParties(joueur.getIdentifiant(), joueur.getMotDePasse()));
+                    for (Partie p : donnerListeParties(joueur.getIdentifiant(), joueur.getMotDePasse()).liste) {
+                        System.out.println(p);
+                    }
                     System.out.println("#####################################");
                     break;
                 case 5:
