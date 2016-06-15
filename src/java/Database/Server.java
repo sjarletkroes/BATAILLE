@@ -201,5 +201,30 @@ public class Server implements RemoteServer {
         }
         return jou;
     }
+
+    @Override
+    public int getScore(String username, String password) throws RemoteException {
+        Joueur j = Authentify(username,password);
+        if(j == null) {
+            return 0;
+        } else {
+            return j.getScore();
+        }
+    }
+
+    @Override
+    public int getClassement(String username, String password) throws RemoteException {
+        Joueur joueur = Authentify(username,password);
+        if(joueur == null) {
+            return 0;
+        }
+        int classement = 0;
+        for(Joueur j : joueurs) {
+            if(j.getScore() < joueur.getScore()) {
+                classement++;
+            }
+        }
+        return classement;
+    }
     
 }

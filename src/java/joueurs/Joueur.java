@@ -24,6 +24,7 @@ public class Joueur implements Serializable {
     private String motDePasse;          //password
     private ArrayList<Partie> parties;  //unknown
     private boolean connecte;           //connection status
+    private int score;
     
     /*
     * Default constructor
@@ -33,7 +34,8 @@ public class Joueur implements Serializable {
         super();
         this.identifiant = "John";
         this.motDePasse = "Doe";
-        connecte = false;
+        this.connecte = false;
+        this.score = 0;
     }
     
     /*
@@ -46,7 +48,8 @@ public class Joueur implements Serializable {
         this.identifiant = identifiant;
         this.motDePasse = motDePasse;
         this.parties = new ArrayList<>();
-        connecte = false;
+        this.connecte = false;
+        this.score = 0;
     }
     
     /*
@@ -86,4 +89,13 @@ public class Joueur implements Serializable {
     public void setPartie(Partie partie) {
         this.parties.add(partie);
     }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+    
 }
