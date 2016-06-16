@@ -17,13 +17,13 @@ import parties.Parties;
 public interface RemoteServer extends Remote {
     boolean         Login(String username, String password) throws RemoteException;
     boolean         AddPlayer(String username, String password) throws RemoteException;
+    int getClassement(String username, String password) throws RemoteException;
+    // to remove
     boolean         CreateGame(String username, String password) throws RemoteException;
     Parties    ListCurrentGames(String username, String password) throws RemoteException;
-    // to remove
     Parties    RejoindrePartie(String partie,String username,String password) throws RemoteException;
-    //
     int getScore(String username, String password) throws RemoteException;
-    int getClassement(String username, String password) throws RemoteException;
     void            Disconnect(String username, String password) throws RemoteException;
     Joueurs    ListJoueursConnectes(String username, String password) throws RemoteException;
+    //
 }
