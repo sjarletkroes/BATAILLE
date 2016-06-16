@@ -13,8 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
-import joueurs.Joueur;
-import joueurs.Joueurs;
+import SynchronisationClient.Joueur;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -26,9 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import parties.Partie;
-import parties.Parties;
-import parties.PartiesObjects;
+import SynchronisationClient.Partie;
+import SynchronisationClient.SynchronisationClient;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
  * le classement des joueurs, demander la liste des joueurs connectés, demander 
@@ -37,20 +35,10 @@ import parties.PartiesObjects;
 @Path("/")
 public class ServiceJoueur {
     
-    private static final Joueurs joueurs;
+    private static final SynchronisationClient synchronisation;
     
     static {
-        joueurs = new Joueurs();
-        //joueurs.liste.add(new Joueur("Nom", "Prenom", "Identifiant", "Mot De Passe"));
-    }
-    
-    /**
-     * listerJoueurs
-     */
-    @GET
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Joueurs listerJoueurs() {
-        return joueurs;
+        synchronisation = new SynchronisationClient();
     }
     
     /**
@@ -59,91 +47,66 @@ public class ServiceJoueur {
     @GET
     @Path("authentifier/{identifiant}/{motDePasse}")
     @Produces("text/plain")
-    public Joueur authentifier(@PathParam("identifiant") String identifiant, 
+    public boolean authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
-        Registry registry;
-        try {
-            registry = LocateRegistry.getRegistry(1099);
-        } catch (RemoteException ex) {
-            System.out.println("Server error #1");
-            return null;
-        }
-        try {
-            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            if (stub.Login(identifiant, motDePasse)) {
-                return new Joueur(identifiant, motDePasse);
-            } else {
-                return null;
-            }
-        } catch (RemoteException ex) {
-            System.out.println(ex.getMessage());
-            return null;
-        } catch (NotBoundException ex) {
-            System.out.println("Incorrect username or password");
-            return null;
-        }
+        
+        return this.synchronisation.connecterJoueur(identifiant, motDePasse);
+        
     }
     
     /**
      * creerCompte
      */
-    @PUT
-    @Path("creerCompte")
-    @Consumes(MediaType.APPLICATION_XML)
+    @GET
+    @Path("creerCompte/{identifiant}/{motDePasse}")
+//    @Consumes(MediaType.APPLICATION_XML)
     @Produces("text/plain")
-    public String creerCompte(JAXBElement<Joueur> c) {
-        Joueur monJoueur = c.getValue();
-        Registry registry;
-        try {
-            registry = LocateRegistry.getRegistry(1099);
-        } catch (RemoteException ex) {
-            return "Server error #1";
-        }
-        try {
-            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            
-            if(!stub.AddPlayer(monJoueur.getIdentifiant(),monJoueur.getMotDePasse()))
-            {
-                return "Error";
-            }
-            else
-                return "OK";
-        } catch (RemoteException ex) {
-            return ex.getMessage();
-        } catch (NotBoundException ex) {
-            return "Game not found critical error";
-        }
+    public boolean creerCompte(@PathParam("identifiant") String identifiant, 
+            @PathParam("motDePasse") String motDePasse) {
+        
+        return this.synchronisation.creerJoueur(identifiant, motDePasse);
+        
     }
     
     /**
-     * Creates a new game bound to the player
+     * deconnecter
      */
-    @PUT
-    @Path("creerPartie")
-    @Consumes(MediaType.APPLICATION_XML)
+    @GET
+    @Path("deconnecter/{identifiant}")
     @Produces("text/plain")
-    public String creerPartie(JAXBElement<Joueur> c) {
-        Joueur monJoueur = c.getValue();
-        Registry registry;
-        try {
-            registry = LocateRegistry.getRegistry(1099);
-        } catch (RemoteException ex) {
-            return "Server error #1";
-        }
-        try {
-            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            
-            if(!stub.CreateGame(monJoueur.getIdentifiant(), monJoueur.getMotDePasse()))
-            {
-                return "Error";
-            }
-            else
-                return "OK";
-        } catch (RemoteException ex) {
-            return ex.getMessage();
-        } catch (NotBoundException ex) {
-            return "Game not found critical error";
-        }
+    public boolean deconnecter(@PathParam("identifiant") String identifiant) {
+        
+        return this.synchronisation.deconnecterJoueur(identifiant);
+        
+    }
+    
+    /**
+     * creerPartie
+     */
+    @GET
+    @Path("creerPartie/{identifiant}/{motDePasse}/{nbJoueurs}")
+    @Produces("text/plain")
+    public int creerPartie(@PathParam("identifiant") String identifiant,  
+            @PathParam("nbJoueurs") int nbJoueurs) {
+        
+        return this.synchronisation.creerPartie(identifiant, nbJoueurs);
+        
+    }
+    
+    /**
+     * startPartie
+     * @param identifiant
+     * @param idPartie
+     * @return 
+     */
+    @GET
+    @Path("deconnecterPartie/{identifiant}/{idPartie}")
+    @Produces("text/plain")
+    public boolean deconnecterPartie(@PathParam("identifiant") String identifiant,
+            @PathParam("idPartie") int idPartie) {
+        
+        return this.synchronisation.deconnecterJoueurPartie(identifiant, idPartie);
+   
     }
     
     /**
@@ -152,8 +115,10 @@ public class ServiceJoueur {
     @GET
     @Path("donnerScore/{identifiant}")
     @Produces("text/plain")
-    public String donnerScore(@PathParam("identifiant") String identifiant) {
-        return "Désolé, donnerScore n'est pas encore implémenté";
+    public int donnerScore(@PathParam("identifiant") String identifiant) {
+        
+        return this.synchronisation.getScore(identifiant);
+        
     }
     
     /**
@@ -163,102 +128,46 @@ public class ServiceJoueur {
     @Path("donnerClassement/{identifiant}")
     @Produces("text/plain")
     public String donnerClassement(@PathParam("identifiant") String identifiant) {
-        return "Désolé, donnerClassement n'est pas encore implémenté";
+        
+        return this.synchronisation.getClassement(identifiant);
+        
     }
     
     /**
      * donnerListeConnectes
      */
     @GET
-    @Path("donnerListeConnectes/{identifiant}/{motdepasse}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Joueurs donnerListeConnectes(@PathParam("identifiant") String identifiant,@PathParam("motdepasse") String motDePasse) {
-        Registry registry;
-        try {
-            registry = LocateRegistry.getRegistry(1099);
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        try {
-            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            Joueurs games = stub.ListJoueursConnectes(identifiant,motDePasse);
-            if(games != null)
-            {
-                return games;
-            }
-            else
-                return null;
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (NotBoundException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+    @Path("donnerListeConnectes/{identifiant}")
+    @Produces("text/plain")
+    public String donnerListeConnectes(@PathParam("identifiant") String identifiant) {
+        
+        return this.synchronisation.listerJoueurs(identifiant);
+        
     }
     
     /**
      * donnerListePartiesAttente
      */
     @GET
-    @Path("donnerListePartiesAttente/{identifiant}/{motDePasse}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Parties donnerListePartiesAttente(@PathParam("identifiant") String identifiant, 
-            @PathParam("motDePasse") String motDePasse) {
-        Registry registry;
-        try {
-            registry = LocateRegistry.getRegistry(1099);
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        try {
-            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            Parties games = stub.ListCurrentGames(identifiant, motDePasse);
-            if(games != null)
-            {
-                return games;
-            }
-            else
-                return null;
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (NotBoundException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+    @Path("donnerListePartiesAttente/{identifiant}")
+    @Produces("text/plain")
+    public String donnerListePartiesAttente(@PathParam("identifiant") String identifiant) {
+        
+        return this.synchronisation.listerParties(identifiant);
+        
     }
     
     /**
      * donnerListePartiesAttente
      */
     @GET
-    @Path("rejoindrePartie/{partie}/{identifiant}/{motDePasse}")
+    @Path("rejoindrePartie/{identifiant}/{idPartie}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Parties rejoindrePartie(@PathParam("partie") String partie,@PathParam("identifiant") String identifiant, 
-            @PathParam("motDePasse") String motDePasse) {
-        Registry registry;
-        try {
-            registry = LocateRegistry.getRegistry(1099);
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        try {
-            RemoteServer stub = (RemoteServer) registry.lookup("RemoteServer");
-            Parties games = stub.RejoindrePartie(partie,identifiant, motDePasse);
-            if(games != null)
-            {
-                return games;
-            }
-            else
-                return null;
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        } catch (NotBoundException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+    public boolean rejoindrePartie(@PathParam("identifiant") String identifiant, 
+            @PathParam("idPartie") int idPartie) {
+        
+        return this.synchronisation.ajouterJoueurPartie(identifiant, idPartie);
+        
     }
     
 }

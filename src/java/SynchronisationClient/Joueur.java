@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package joueurs;
+package SynchronisationClient;
 
-import parties.Partie;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlRootElement;
 import Database.*;

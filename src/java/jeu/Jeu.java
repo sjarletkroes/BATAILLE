@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import joueurs.Joueur;
-import parties.Partie;
+import SynchronisationClient.Joueur;
+import SynchronisationClient.Partie;
 
 /**
  * 
@@ -114,6 +114,10 @@ public class Jeu {
         return null;
     }
     
+    public boolean jouer(Joueur j) {
+        return true;
+    }
+    
     /*
      ** --- main ---
      */
@@ -128,7 +132,7 @@ public class Jeu {
         joueur3.setConnecte(true);
         joueur4.setConnecte(true);
         joueur5.setConnecte(true);
-        Partie partie = new Partie(joueur1, joueur2, joueur3, joueur4, joueur5);
+        Partie partie = new Partie(joueur1, 5, joueur2, joueur3, joueur4, joueur5);
         Jeu jeu = new Jeu(partie);
         
         // Distribution des cartes

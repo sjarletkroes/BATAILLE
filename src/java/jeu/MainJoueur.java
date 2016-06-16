@@ -6,7 +6,7 @@
 package jeu;
 
 import java.util.ArrayList;
-import joueurs.Joueur;
+import SynchronisationClient.Joueur;
 
 /**
  * 

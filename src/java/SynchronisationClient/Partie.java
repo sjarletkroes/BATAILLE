@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package parties;
+package SynchronisationClient;
 
 import Database.IJoueur;
-import Database.IPartie;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import javax.xml.bind.annotation.XmlRootElement;
-import joueurs.Joueur;
+import SynchronisationClient.Joueur;
 
 /**
  * Describes a basic Game identified by creator's username and games unique name
@@ -23,6 +22,7 @@ import joueurs.Joueur;
 public class Partie implements Serializable {
     private Joueur createur;            //creator's username
     private List<Joueur> listeJoueurs;   //list of participants
+    private int nbJoueurs;
     private boolean fini;
     private Joueur gagnant;
     public Partie() {}
@@ -40,7 +40,7 @@ public class Partie implements Serializable {
         this.listeJoueurs.add(createur);
     }
     
-    public Partie(Joueur createur, Joueur... joueur)
+    public Partie(Joueur createur, int nbJoueurs, Joueur... joueur)
     {
         this.createur = createur;
         this.fini = false;
@@ -48,6 +48,7 @@ public class Partie implements Serializable {
         this.listeJoueurs = new ArrayList<>();
         this.listeJoueurs.add(createur);
         this.listeJoueurs.addAll(Arrays.asList(joueur));
+        this.nbJoueurs = nbJoueurs > 1 ? nbJoueurs : 2;
     }
     
     /*
@@ -119,5 +120,9 @@ public class Partie implements Serializable {
         else
             return false;
         return true;
+    }
+
+    boolean removePlayer(Joueur joueur) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
