@@ -92,10 +92,11 @@ public class Server implements RemoteServer {
     public boolean saveJoueur(Joueur joueur) throws RemoteException {
         for(Joueur j : joueurs) {
             if(j.getIdentifiant().equals(joueur.getIdentifiant())) {
-                return false;
+                joueurs.remove(j);
+                return joueurs.add(joueur);
             }
         }
-        return joueurs.add(joueur);
+        return false;
     }
 
     @Override

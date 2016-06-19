@@ -14,14 +14,12 @@ import java.rmi.RemoteException;
 /**
  * Describes a player defined by a username, password, and connection status
  */
-@XmlRootElement(name = "Joueur")
 public class Joueur implements Serializable {
     /*
     * Properties
     */
     private String identifiant;         //username
     private String motDePasse;          //password
-    private ArrayList<Partie> parties;  //unknown
     private boolean connecte;           //connection status
     private int score;
     
@@ -46,7 +44,6 @@ public class Joueur implements Serializable {
         super();
         this.identifiant = identifiant;
         this.motDePasse = motDePasse;
-        this.parties = new ArrayList<>();
         this.connecte = false;
         this.score = 0;
     }
@@ -80,14 +77,6 @@ public class Joueur implements Serializable {
     public void setMotDePasse(String motDePasse) {
         this.motDePasse = motDePasse;
     }
-    
-    public ArrayList<Partie> getParties() {
-        return parties;
-    }
-
-    public void setPartie(Partie partie) {
-        this.parties.add(partie);
-    }
 
     public int getScore() {
         return score;
@@ -95,6 +84,15 @@ public class Joueur implements Serializable {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    /*
+    * TOSTRING
+    */
+    
+    @Override
+    public String toString() {
+        return "Joueur{" + "identifiant=" + identifiant + '}';
     }
     
 }

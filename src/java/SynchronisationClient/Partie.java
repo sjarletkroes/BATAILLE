@@ -14,18 +14,35 @@ import java.util.List;
 import java.util.ListIterator;
 import javax.xml.bind.annotation.XmlRootElement;
 import SynchronisationClient.Joueur;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jeu.Carte;
+import jeu.MainJoueur;
 
 /**
  * Describes a basic Game identified by creator's username and games unique name
  */
-@XmlRootElement(name = "Partie")
-public class Partie implements Serializable {
+public class Partie extends Thread {
+
+    public enum EtatPartie {EN_ATTENTE, EN_COURS, FINI};
+    private static final int NOMBRE_CARTES = 32;
+    
     private Joueur createur;            //creator's username
     private List<Joueur> listeJoueurs;   //list of participants
     private int nbJoueurs;
-    private boolean fini;
-    private Joueur gagnant;
+    private EtatPartie fini;
+    private ArrayList<Carte> jeu;
+    private Map<Joueur, Integer> score;
+    private Map<Joueur, MainJoueur> mainsJoueurs;
+    private Joueur joueurCourant;
+    private Map<Joueur, Carte> tour;
+    
+    
     public Partie() {}
+    
     /**
      * Crée un nouveau jeu
      *
@@ -34,21 +51,93 @@ public class Partie implements Serializable {
     public Partie(Joueur createur)
     {
         this.createur = createur;
-        this.fini = false;
-        this.gagnant = null;
+        this.fini = EtatPartie.EN_ATTENTE;
         this.listeJoueurs = new ArrayList<>();
         this.listeJoueurs.add(createur);
+        this.nbJoueurs = 2;
+        this.tour = new HashMap();
+        this.mainsJoueurs = new HashMap();
+        this.score = new HashMap();
     }
     
-    public Partie(Joueur createur, int nbJoueurs, Joueur... joueur)
+    public Partie(Joueur createur, int nbJoueurs)
     {
         this.createur = createur;
-        this.fini = false;
-        this.gagnant = null;
+        this.fini = EtatPartie.EN_ATTENTE;
         this.listeJoueurs = new ArrayList<>();
         this.listeJoueurs.add(createur);
-        this.listeJoueurs.addAll(Arrays.asList(joueur));
         this.nbJoueurs = nbJoueurs > 1 ? nbJoueurs : 2;
+        this.tour = new HashMap();
+        this.mainsJoueurs = new HashMap();
+        this.score = new HashMap();
+    }
+
+    /**
+     * Retourne une carte du jeu au hasard.
+     *
+     * @return Carte
+     */
+    public Carte getSuivant() {
+        Random r = new Random();
+        int x = r.nextInt(this.jeu.size());
+        return this.jeu.remove(x);
+    }
+    
+    /**
+     * Initialise le jeu de cartes.
+     */
+    private void initJeu() {
+        this.jeu = new ArrayList<>();
+        for (int i=0; i<NOMBRE_CARTES/4; i++) {
+            for (Carte.Couleur couleur : Carte.Couleur.values()) {
+                this.jeu.add(new Carte(i+7, couleur));
+            }
+        }
+        for (Joueur j : this.getListeJoueurs()) {
+            score.put(j, 0);
+        }
+    }
+    
+    /**
+     * Distribue les cartes aux joueurs.
+     *
+     * @return Map<Joueur, MainJoueur>
+     */
+    private void initJoueurs() {
+        for (Joueur j : this.getListeJoueurs()) {
+            mainsJoueurs.put(j, new MainJoueur());
+        }
+        for (int i=0; i<NOMBRE_CARTES; i++) {
+            for (MainJoueur m : mainsJoueurs.values()) {
+                if (!this.jeu.isEmpty()) {
+                    m.addCarte(this.getSuivant());
+                }
+            }
+        }
+        int i = 0;
+    }
+    
+    public void run() {
+        this.initJeu();
+        this.initJoueurs();
+        while(this.fini == EtatPartie.EN_COURS) {
+            // on récupère les cartes des joueurs
+            for(Joueur j : listeJoueurs) {
+                this.joueurCourant = j;
+                synchronized(this.joueurCourant) {
+                    this.joueurCourant.notifyAll();
+                }
+                try {
+                    synchronized(this.tour) {
+                        this.tour.wait();
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Partie.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            // on joue le tour
+            this.fini = EtatPartie.FINI;
+        }
     }
     
     /*
@@ -67,20 +156,12 @@ public class Partie implements Serializable {
     
     public boolean isFini() 
     {
-        return fini;
+        return fini == EtatPartie.FINI;
     }
     
-    private void setFini(boolean fini)    //only accessed by the class if conditions meet
+    public void setFini(EtatPartie fini)
     {
         this.fini = fini;
-    }
-
-    public Joueur getGagnant() {
-        return gagnant;
-    }
-
-    public void setGagnant(Joueur gagnant) {
-        this.gagnant = gagnant;
     }
 
     public List<Joueur> getListeJoueurs() {
@@ -98,7 +179,12 @@ public class Partie implements Serializable {
 
     @Override
     public String toString() {
-        return "Partie{" + "createur=" + createur + ", listeJoueurs=" + listeJoueurs + ", fini=" + fini + ", gagnant=" + gagnant + '}';
+        String s = "Partie{" + "createur=" + createur + ", listeJoueurs=";
+        for(Joueur j : listeJoueurs) {
+            s += ", " + j;
+        }
+        s += ", fini=" + fini + '}';
+        return s;
     }
     
     
@@ -124,5 +210,25 @@ public class Partie implements Serializable {
 
     boolean removePlayer(Joueur joueur) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public String jouerCarte(Joueur j) {
+        while(this.joueurCourant != j) {
+        }
+        Carte c = this.mainsJoueurs.get(j).getCarte();
+        if(c != null) {
+            this.tour.put(j, c);
+            synchronized(this.tour) {
+                this.tour.notify();
+            }
+            return c.toString();
+        } else {
+            this.removePlayer(j);
+            return "fini";
+        }
+    }
+    
+    public boolean estComplete() {
+        return this.getListeJoueurs().size() == this.getNombreJoueurs();
     }
 }

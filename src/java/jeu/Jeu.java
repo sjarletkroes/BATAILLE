@@ -61,7 +61,7 @@ public class Jeu {
     private ArrayList<MainJoueur> initJoueurs() {
         ArrayList<MainJoueur> liste = new ArrayList<>();
         for (Joueur j : this.partie.getListeJoueurs()) {
-            MainJoueur main = new MainJoueur(j);
+            MainJoueur main = new MainJoueur();
             liste.add(main);
         }
         for (int i=0; i<NOMBRE_CARTES; i++) {
@@ -80,7 +80,7 @@ public class Jeu {
      * @param liste
      * @return 
      */
-    public Joueur actionJeu(ArrayList<MainJoueur> liste) {
+    /*public Joueur actionJeu(ArrayList<MainJoueur> liste) {
         while (!liste.isEmpty()) {
             Joueur meilleur = null;
             Carte max = new Carte(0, null);
@@ -112,7 +112,7 @@ public class Jeu {
         }
         this.partie.isFini();
         return null;
-    }
+    }*/
     
     public boolean jouer(Joueur j) {
         return true;
@@ -132,13 +132,13 @@ public class Jeu {
         joueur3.setConnecte(true);
         joueur4.setConnecte(true);
         joueur5.setConnecte(true);
-        Partie partie = new Partie(joueur1, 5, joueur2, joueur3, joueur4, joueur5);
+        Partie partie = new Partie(joueur1, 5);
         Jeu jeu = new Jeu(partie);
         
         // Distribution des cartes
         ArrayList<MainJoueur> liste = jeu.initJoueurs();
         
         // Jeu
-        jeu.actionJeu(liste);
+        //jeu.actionJeu(liste);
     }
 }

@@ -6,6 +6,7 @@
 package SynchronisationClient;
 
 import Database.RemoteServer;
+import SynchronisationClient.Partie.EtatPartie;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -13,6 +14,8 @@ import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -181,7 +184,13 @@ public class SynchronisationClient extends Thread {
         for(Joueur joueur : joueurs) {
             if(joueur.getIdentifiant().equals(identifiant)) {
                 if(parties.containsKey(idPartie)) {
-                    return parties.get(idPartie).addPlayer(joueur);
+                    Partie p = parties.get(idPartie);
+                    boolean ajout = p.addPlayer(joueur);
+                    if(p.estComplete()) {
+                        p.setFini(EtatPartie.EN_COURS);
+                        p.start();
+                    }
+                    return ajout;
                 }
             }
         }
@@ -270,6 +279,35 @@ public class SynchronisationClient extends Thread {
             sb.append(String.format("%s : %s\n", p.getKey(), p.getValue().toString()));
         }
         return sb.toString();
+    }
+
+    public String jouerCarte(String identifiant, int idPartie) {
+        Joueur j = this.getJoueur(identifiant);
+        Partie p = this.getPartie(idPartie);
+        if(j != null && p != null) {
+            return p.jouerCarte(j);
+        }
+        return null;
+    }
+    
+    private Joueur getJoueur(String identifiant) {
+        for(Joueur j : this.joueurs) {
+            if(j.getIdentifiant().equals(identifiant)) {
+                return j;
+            }
+        }
+        return null;
+    }
+    
+    private Partie getPartie(int idPartie) {
+        if (this.parties.containsKey(idPartie)) {
+            return this.parties.get(idPartie);
+        }
+        return null;
+    }
+
+    public boolean estComplete(String identifiant, int idPartie) {
+        return this.getPartie(idPartie).estComplete();
     }
     
 }

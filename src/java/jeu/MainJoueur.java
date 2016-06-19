@@ -13,30 +13,19 @@ import SynchronisationClient.Joueur;
  */
 public class MainJoueur {
     
-    private Joueur joueur;
     private ArrayList<Carte> main;
 
-    public MainJoueur(Joueur joueur) {
-        this.joueur = joueur;
+    public MainJoueur() {
         this.main = new ArrayList<>();
     }
 
-    public MainJoueur(Joueur joueur, ArrayList<Carte> main) {
-        this.joueur = joueur;
-        this.main = main;
+    public MainJoueur(ArrayList<Carte> main) {
+        this.main.addAll(main);
     }
     
     /*
     * GETTERS AND SETTERS
     */
-
-    public Joueur getJoueur() {
-        return joueur;
-    }
-
-    public void setJoueur(Joueur joueur) {
-        this.joueur = joueur;
-    }
 
     public ArrayList<Carte> getMain() {
         return main;
@@ -63,6 +52,11 @@ public class MainJoueur {
 
     @Override
     public String toString() {
-        return "MainJoueur{" + "joueur=" + joueur + ", main=" + main.get(0) + '}';
+        String s = "MainJoueur{" + "main=";
+        for(Carte c : this.main) {
+            s += ", " + c;
+        }
+        s += '}';
+        return s;
     }
 }

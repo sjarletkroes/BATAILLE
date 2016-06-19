@@ -5,27 +5,12 @@
  */
 package client;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBElement;
-import SynchronisationClient.Joueur;
 
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-
-import Database.*;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import SynchronisationClient.Partie;
 import SynchronisationClient.SynchronisationClient;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
@@ -162,12 +147,35 @@ public class ServiceJoueur {
      */
     @GET
     @Path("rejoindrePartie/{identifiant}/{idPartie}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces("text/plain")
     public boolean rejoindrePartie(@PathParam("identifiant") String identifiant, 
             @PathParam("idPartie") int idPartie) {
         
         return this.synchronisation.ajouterJoueurPartie(identifiant, idPartie);
         
+    }
+    
+    /**
+     * donnerListePartiesAttente
+     */
+    @GET
+    @Path("jouerCarte/{identifiant}/{idPartie}")
+    @Produces("text/plain")
+    public String jouerCarte(@PathParam("identifiant") String identifiant, 
+            @PathParam("idPartie") int idPartie) {
+        
+        return this.synchronisation.jouerCarte(identifiant, idPartie);
+        
+    }
+    
+    @GET
+    @Path("estComplete/{identifiant}/{idPartie}")
+    @Produces("text/plain")
+    public boolean estComplete(@PathParam("identifiant") String identifiant,
+            @PathParam("idPartie") int idPartie) {
+        
+        return this.synchronisation.estComplete(identifiant, idPartie);
+   
     }
     
 }
