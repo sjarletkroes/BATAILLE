@@ -84,7 +84,7 @@ public class ServiceJoueur {
      * creerPartie
      */
     @GET
-    @Path("creerPartie/{identifiant}/{motDePasse}/{nbJoueurs}")
+    @Path("creerPartie/{identifiant}/{nbJoueurs}")
     @Produces("text/plain")
     public int creerPartie(@PathParam("identifiant") String identifiant,  
             @PathParam("nbJoueurs") int nbJoueurs) {

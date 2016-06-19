@@ -247,7 +247,7 @@ public class ClientBataille {
                     } catch (Exception e) {
                         numeroPartie = -1;
                     }
-                    if(numeroPartie > 0) {
+                    if(numeroPartie >= 0) {
                         if(rejoindrePartie(identifiant, numeroPartie)) {
                             System.out.println("Partie rejointe avec succès.");
                         } else {
