@@ -245,8 +245,8 @@ public class ClientBataille {
                             + numeroPartie
                             + " créée avec " + (nbJoueurs>1 ? nbJoueurs : 2)
                             + " joueurs");
-                    while(estComplete(identifiant, numeroPartie)) {
-                    }
+                    boolean b = true;
+                    System.out.println(estComplete(identifiant, numeroPartie));
                     jouer(identifiant, numeroPartie);
                     System.out.println("#####################################");
                     break;
@@ -264,8 +264,7 @@ public class ClientBataille {
                         boolean ok = rejoindrePartie(identifiant, numeroPartie);
                         if(ok) {
                             System.out.println("Partie rejointe avec succès.");
-                            while(estComplete(identifiant, numeroPartie)) {
-                            }
+                            System.out.println(estComplete(identifiant, numeroPartie));
                             jouer(identifiant, numeroPartie);
                         } else {
                             System.out.println("Impossible de rejoindre la partie.");

@@ -164,7 +164,9 @@ public class SynchronisationClient extends Thread {
             if(joueur.getIdentifiant().equals(identifiant)) {
                 for(int i=0; i<100; i++) {
                     if(!parties.containsKey(i)) {
-                        parties.put(i, new Partie(joueur, nbJoueurs));
+                        Partie p = new Partie(joueur, nbJoueurs);
+                        parties.put(i, p);
+                        p.start();
                         return i;
                     }
                 }
@@ -188,7 +190,9 @@ public class SynchronisationClient extends Thread {
                     boolean ajout = p.addPlayer(joueur);
                     if(p.estComplete()) {
                         p.setFini(EtatPartie.EN_COURS);
-                        p.start();
+                        synchronized(p) {
+                            p.notifyAll();
+                        }
                     }
                     return ajout;
                 }
@@ -307,7 +311,16 @@ public class SynchronisationClient extends Thread {
     }
 
     public boolean estComplete(String identifiant, int idPartie) {
-        return this.getPartie(idPartie).estComplete();
+        while(this.getPartie(idPartie).estComplete()) {
+            try {
+                synchronized(this.getPartie(idPartie)) {
+                    this.getPartie(idPartie).wait();
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SynchronisationClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return true;
     }
     
 }
