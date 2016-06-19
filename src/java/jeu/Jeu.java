@@ -5,6 +5,8 @@
  */
 package jeu;
 
+import SynchronisationClient.MainJoueur;
+import SynchronisationClient.Carte;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

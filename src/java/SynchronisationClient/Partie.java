@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jeu.Carte;
-import jeu.MainJoueur;
 
 /**
  * Describes a basic Game identified by creator's username and games unique name
@@ -161,7 +159,10 @@ public class Partie extends Thread {
     
     public void setFini(EtatPartie fini)
     {
-        this.fini = fini;
+        synchronized(this.fini) {
+            this.fini = fini;
+            this.fini.notifyAll();   
+        }
     }
 
     public List<Joueur> getListeJoueurs() {
@@ -174,7 +175,7 @@ public class Partie extends Thread {
     
     public int getNombreJoueurs()
     {
-        return listeJoueurs.size();
+        return nbJoueurs;
     }
 
     @Override
@@ -201,10 +202,17 @@ public class Partie extends Thread {
             if(it.next().getIdentifiant().equals(joueur.getIdentifiant()))
                 exists = true;
         }
-        if(!isFini() && !exists)
+        if(!isFini() && !exists) {
             listeJoueurs.add(joueur);
-        else
+            if(this.nbJoueurs == this.listeJoueurs.size()) {
+                synchronized(this.fini) {
+                    this.setFini(EtatPartie.EN_COURS);
+                    this.fini.notifyAll();
+                }
+            }
+        } else {
             return false;
+        }
         return true;
     }
 
@@ -229,6 +237,7 @@ public class Partie extends Thread {
     }
     
     public boolean estComplete() {
+        while(!(fini == EtatPartie.EN_COURS)) {}
         return this.getListeJoueurs().size() == this.getNombreJoueurs();
     }
 }

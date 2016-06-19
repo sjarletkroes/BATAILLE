@@ -12,6 +12,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import SynchronisationClient.SynchronisationClient;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 /**
  * Le client doit pouvoir s’authentifier, créer un compte, récupérer son score, 
  * le classement des joueurs, demander la liste des joueurs connectés, demander 

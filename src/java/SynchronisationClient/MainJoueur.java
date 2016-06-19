@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jeu;
+package SynchronisationClient;
 
+import SynchronisationClient.Carte;
 import java.util.ArrayList;
 import SynchronisationClient.Joueur;
 
