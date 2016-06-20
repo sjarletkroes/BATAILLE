@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author Goldwing
  */
-public class SynchronisationClient extends Thread {
+public class SynchronisationClient implements RemoteSynchronisationClient {
     
     private LinkedList<Joueur> joueurs;
     private HashMap<Integer, Partie> parties;

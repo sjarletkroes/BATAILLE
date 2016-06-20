@@ -5,6 +5,7 @@
  */
 package client;
 
+import SynchronisationClient.RemoteSynchronisationClient;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -12,8 +13,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import SynchronisationClient.SynchronisationClient;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.container.AsyncResponse;
@@ -26,10 +34,19 @@ import javax.ws.rs.container.Suspended;
 @Path("/")
 public class ServiceJoueur {
     
-    private static final SynchronisationClient synchronisation;
+    static RemoteSynchronisationClient synchronisation;
     
     static {
-        synchronisation = new SynchronisationClient();
+        Registry reg;
+        try {
+            reg = LocateRegistry.getRegistry();
+            
+            synchronisation = (RemoteSynchronisationClient)reg.lookup("Synchro");
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotBoundException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -41,8 +58,12 @@ public class ServiceJoueur {
     public boolean authentifier(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
         
-        return this.synchronisation.connecterJoueur(identifiant, motDePasse);
-        
+        try {
+            return this.synchronisation.connecterJoueur(identifiant, motDePasse);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     /**
@@ -55,8 +76,12 @@ public class ServiceJoueur {
     public boolean creerCompte(@PathParam("identifiant") String identifiant, 
             @PathParam("motDePasse") String motDePasse) {
         
-        return this.synchronisation.creerJoueur(identifiant, motDePasse);
-        
+        try {
+            return this.synchronisation.creerJoueur(identifiant, motDePasse);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     /**
@@ -67,8 +92,12 @@ public class ServiceJoueur {
     @Produces("text/plain")
     public boolean deconnecter(@PathParam("identifiant") String identifiant) {
         
-        return this.synchronisation.deconnecterJoueur(identifiant);
-        
+        try {
+            return this.synchronisation.deconnecterJoueur(identifiant);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     /**
@@ -80,8 +109,12 @@ public class ServiceJoueur {
     public int creerPartie(@PathParam("identifiant") String identifiant,  
             @PathParam("nbJoueurs") int nbJoueurs) {
         
-        return this.synchronisation.creerPartie(identifiant, nbJoueurs);
-        
+        try {
+            return this.synchronisation.creerPartie(identifiant, nbJoueurs);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
     }
     
     /**
@@ -96,8 +129,12 @@ public class ServiceJoueur {
     public boolean deconnecterPartie(@PathParam("identifiant") String identifiant,
             @PathParam("idPartie") int idPartie) {
         
-        return this.synchronisation.deconnecterJoueurPartie(identifiant, idPartie);
-   
+        try {
+            return this.synchronisation.deconnecterJoueurPartie(identifiant, idPartie);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     /**
@@ -108,8 +145,12 @@ public class ServiceJoueur {
     @Produces("text/plain")
     public int donnerScore(@PathParam("identifiant") String identifiant) {
         
-        return this.synchronisation.getScore(identifiant);
-        
+        try {
+            return this.synchronisation.getScore(identifiant);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
     }
     
     /**
@@ -120,8 +161,12 @@ public class ServiceJoueur {
     @Produces("text/plain")
     public String donnerClassement(@PathParam("identifiant") String identifiant) {
         
-        return this.synchronisation.getClassement(identifiant);
-        
+        try {
+            return this.synchronisation.getClassement(identifiant);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
     
     /**
@@ -132,8 +177,12 @@ public class ServiceJoueur {
     @Produces("text/plain")
     public String donnerListeConnectes(@PathParam("identifiant") String identifiant) {
         
-        return this.synchronisation.listerJoueurs(identifiant);
-        
+        try {
+            return this.synchronisation.listerJoueurs(identifiant);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
     
     /**
@@ -144,8 +193,12 @@ public class ServiceJoueur {
     @Produces("text/plain")
     public String donnerListePartiesAttente(@PathParam("identifiant") String identifiant) {
         
-        return this.synchronisation.listerParties(identifiant);
-        
+        try {
+            return this.synchronisation.listerParties(identifiant);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
     
     /**
@@ -157,8 +210,12 @@ public class ServiceJoueur {
     public boolean rejoindrePartie(@PathParam("identifiant") String identifiant, 
             @PathParam("idPartie") int idPartie) {
         
-        return this.synchronisation.ajouterJoueurPartie(identifiant, idPartie);
-        
+        try {
+            return this.synchronisation.ajouterJoueurPartie(identifiant, idPartie);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     /**
@@ -170,8 +227,12 @@ public class ServiceJoueur {
     public String jouerCarte(@PathParam("identifiant") String identifiant, 
             @PathParam("idPartie") int idPartie) {
         
-        return this.synchronisation.jouerCarte(identifiant, idPartie);
-        
+        try {
+            return this.synchronisation.jouerCarte(identifiant, idPartie);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
     
     @GET
@@ -180,7 +241,12 @@ public class ServiceJoueur {
     public boolean estComplete(@PathParam("identifiant") String identifiant,
             @PathParam("idPartie") int idPartie) {
         
-        return this.synchronisation.estComplete(identifiant, idPartie);
+        try {
+            return this.synchronisation.estComplete(identifiant, idPartie);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServiceJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
    
     }
     
