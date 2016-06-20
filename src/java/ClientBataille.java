@@ -246,7 +246,7 @@ public class ClientBataille {
                             + " créée avec " + (nbJoueurs>1 ? nbJoueurs : 2)
                             + " joueurs");
                     boolean b = true;
-                    System.out.println(estComplete(identifiant, numeroPartie));
+//                    System.out.println(estComplete(identifiant, numeroPartie));
                     jouer(identifiant, numeroPartie);
                     System.out.println("#####################################");
                     break;
@@ -264,7 +264,7 @@ public class ClientBataille {
                         boolean ok = rejoindrePartie(identifiant, numeroPartie);
                         if(ok) {
                             System.out.println("Partie rejointe avec succès.");
-                            System.out.println(estComplete(identifiant, numeroPartie));
+//                            System.out.println(estComplete(identifiant, numeroPartie));
                             jouer(identifiant, numeroPartie);
                         } else {
                             System.out.println("Impossible de rejoindre la partie.");
@@ -303,12 +303,15 @@ public class ClientBataille {
             
             switch(input) {
                 case 1:
-                    s = serviceJoueur.path("jouerCarte/" + identifiant + "/" 
-                            + numeroPartie).request().get(String.class);
+                    System.out.println("Carte jouée");
+//                    s = serviceJoueur.path("jouerCarte/" + identifiant + "/" 
+//                            + numeroPartie).request().get(String.class);
                     break;
                 case 2:
-                    fini = serviceJoueur.path("deconnecterPartie/" + identifiant + "/" 
-                            + numeroPartie).request().get(Boolean.class);
+                    System.out.println("Déconnexion");
+                    fini = true;
+//                    fini = serviceJoueur.path("deconnecterPartie/" + identifiant + "/" 
+//                            + numeroPartie).request().get(Boolean.class);
                     break;
                 default:
                     System.out.println("Désolé, je n'ai pas compris, veuillez réessayer: ");

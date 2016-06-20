@@ -10,7 +10,6 @@ import Corba.JoueurActionHelper;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import javax.naming.InitialContext;
-import jeu.Jeu;
 
 /**
  *
