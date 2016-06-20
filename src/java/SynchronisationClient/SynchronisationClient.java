@@ -14,6 +14,7 @@ import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -308,4 +309,19 @@ public class SynchronisationClient extends Thread {
         return this.getPartie(idPartie).estComplete();
     }
     
+    synchronized public boolean nbJoueurComplet(int idPartie) {
+        
+            if(parties.containsKey(idPartie)) {
+                if(parties.get(idPartie).getNombreJoueurs() == parties.get(idPartie).getNombreJoueurs()){
+                    return true;
+                }
+            }
+            return false;
+	}
+    
+    synchronized public String comencerJeu(int idPartie) {
+        int idx = new Random().nextInt(parties.get(idPartie).getListeJoueurs().size());
+        String random = parties.get(idPartie).getListeJoueurs().get(idx).getIdentifiant();
+        return random;
+    }  
 }

@@ -1,0 +1,24 @@
+
+module Corba {
+
+    interface JoueurAction {
+        boolean creerJoueur(in string identifiant,in string motDePasse);
+        boolean connecterJoueur(in string identifiant,in string motDePasse);
+        boolean deconnecterJoueur(in string identifiant);
+        long getScore(in string identifiant);
+        string listerJoueurs(in string identifiant);
+        string getClassement(in string identifiant);
+        long creerPartie(in string identifiant,in long nbJoueurs);
+        boolean ajouterJoueurPartie(in string identifiant, in long idPartie);
+        boolean disconnectToPartie(in string identifiant, in long idPartie);
+        string listerParties(in string identifiant);
+        boolean nbJoueurComplet(in long idPartie);
+        string comencerJeu(in long idPartie);
+      };
+
+};
+
+
+
+
+
